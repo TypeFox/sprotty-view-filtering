@@ -8,13 +8,13 @@ const fs = require('fs');
 const path = require('path');
 
 const fields = ['title', 'year', 'authors', 'authors.name', 'fieldsOfStudy', 'isOpenAccess', 'citations', 'citations.paperId'] // process.argv[2].split(',') :'];
-const outputFile = path.resolve(__dirname, '../src/data/data260723.json'); // process.argv[3]';
+const outputFile = path.resolve(__dirname, '../src/data/data270723.json'); // process.argv[3]';
 
 let dataSet = [];
 
 const MAX_LEVELS = 20;
 const MAX_CITATIONS_PER_LEVEL = 20;
-const MAX_FETCHES = 100;
+const MAX_FETCHES = 3000;
 
 let count = 0;
 const fetched = [];

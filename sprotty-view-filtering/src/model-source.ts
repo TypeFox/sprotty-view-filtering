@@ -1,6 +1,6 @@
 import { SEdge, SGraph, SNode, SLabel } from "sprotty-protocol";
 import { PaperNode, TaskNode } from "./model";
-import data from "./data/data260723.json";
+import data from "./data/data270723.json";
 
 type Paper = {
     paperId: string,
@@ -39,7 +39,9 @@ function flattenData(data: Paper): FlattenedData {
     function createCitationHierarchy(data: Paper) {
         if (data.citations) {
             for (const citation of data.citations) {
-                edges.push(createEdge(data.paperId, citation.paperId));
+                if (edges.findIndex(e => e.sourceId === data.paperId && e.targetId === citation.paperId) === -1) {
+                    edges.push(createEdge(data.paperId, citation.paperId));
+                }
                 createCitationHierarchy(citation);
             }
         }
