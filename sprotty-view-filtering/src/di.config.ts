@@ -1,6 +1,6 @@
 import { Container, ContainerModule } from "inversify";
-import { configureModelElement, configureViewerOptions, ConsoleLogger, edgeIntersectionModule, loadDefaultModules, LocalModelSource, LogLevel, PolylineEdgeView, RectangularNode, SEdge, SGraph, SGraphView, TYPES } from "sprotty";
-import { TaskNodeView } from "./views";
+import { configureModelElement, configureViewerOptions, ConsoleLogger, edgeIntersectionModule, loadDefaultModules, LocalModelSource, LogLevel, PolylineEdgeView, RectangularNode, SEdge, SEdgeImpl, SGraph, SGraphImpl, SGraphView, SLabelImpl, SLabelView, TYPES } from "sprotty";
+import { PaperNodeView } from "./views";
 
 export default (containerId: string) => {
 
@@ -9,9 +9,10 @@ export default (containerId: string) => {
         rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
         rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
         const context = { bind, unbind, isBound, rebind };
-        configureModelElement(context, 'graph', SGraph, SGraphView);
-        configureModelElement(context, 'task', RectangularNode, TaskNodeView);
-        configureModelElement(context, 'edge', SEdge, PolylineEdgeView);
+        configureModelElement(context, 'graph', SGraphImpl, SGraphView);
+        configureModelElement(context, 'paper', RectangularNode, PaperNodeView);
+        configureModelElement(context, 'label', SLabelImpl, SLabelView);
+        configureModelElement(context, 'edge', SEdgeImpl, PolylineEdgeView);
 
         configureViewerOptions(context, {
             needsClientLayout: false,

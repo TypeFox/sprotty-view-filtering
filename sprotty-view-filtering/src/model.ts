@@ -5,3 +5,7 @@ export interface TaskNode extends SNode {
     isRunning: boolean;
     isFinished: boolean;
 }
+
+export type PaperNode = {
+    paperId: string
+} & SNode

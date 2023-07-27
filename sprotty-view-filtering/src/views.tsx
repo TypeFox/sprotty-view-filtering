@@ -7,7 +7,7 @@ import { SNode } from 'sprotty-protocol';
 import { TaskNode } from './model';
 
 @injectable()
-export class TaskNodeView implements IView {
+export class PaperNodeView implements IView {
     render(node: Readonly<SNodeImpl & TaskNode>, context: RenderingContext): VNode {
         return <g>
             <rect class-sprotty-node={true} class-task={true}
@@ -17,7 +17,7 @@ export class TaskNodeView implements IView {
                 height={node.size.height}
             >
             </rect>
-            <text x={node.size.width / 2} y={node.size.height / 2 + 5}>{node.name}</text>
+            {context.renderChildren(node)}
         </g>;
     }
 }

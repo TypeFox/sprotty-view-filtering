@@ -2,10 +2,10 @@ import 'reflect-metadata'
 
 import { LocalModelSource, TYPES } from 'sprotty'
 import createContainer from './di.config'
-import { graph } from './model-source';
+import { generateGraph } from './model-source';
 
 document.addEventListener("DOMContentLoaded", () => {
     const container = createContainer('sprotty');
     const modelSource = container.get<LocalModelSource>(TYPES.ModelSource);
-    modelSource.setModel(graph);
+    modelSource.setModel(generateGraph());
 });

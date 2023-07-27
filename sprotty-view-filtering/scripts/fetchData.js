@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 const fields = ['title', 'year', 'authors', 'authors.name', 'fieldsOfStudy', 'isOpenAccess', 'citations', 'citations.paperId'] // process.argv[2].split(',') :'];
-const outputFile = path.resolve(__dirname, '../data/data260723.json'); // process.argv[3]';
+const outputFile = path.resolve(__dirname, '../src/data/data260723.json'); // process.argv[3]';
 
 let dataSet = [];
 
@@ -18,11 +18,11 @@ const MAX_FETCHES = 100;
 
 let count = 0;
 const fetched = [];
-const didFetch = (pid) => {
+const didFetch = (paper) => {
     count++;
-    const isFetched = fetched.includes(pid);
+    const isFetched = fetched.includes(paper.paperId);
     if (!isFetched) {
-        fetched.push(pid);
+        fetched.push(paper.paperId);
     }
 } 
 const alreadyFetched = (pid) => {
@@ -40,7 +40,7 @@ async function fetch(paperId, lvl) {
 
             res.on('end', async () => {
                 const dataBlock = JSON.parse(data);
-                didFetch(dataBlock.paperId);
+                didFetch(dataBlock);
                 console.log(count);
                 if (dataBlock.citations && dataBlock.citations.length > 0) {
                     if (lvl < MAX_LEVELS && count < MAX_FETCHES) {
