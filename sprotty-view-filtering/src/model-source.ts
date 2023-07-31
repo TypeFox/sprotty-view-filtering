@@ -27,7 +27,9 @@ function flattenData(data: Paper): FlattenedData {
     const edges: SEdge[] = [];
     function flatten(paper: Paper) {
         if (papers.findIndex(p => p.paperId === paper.paperId) === -1) {
-            papers.push(createPaperNode(paper));
+            if(!!paper.title) {
+                papers.push(createPaperNode(paper));
+            }
         }
         if (paper.citations) {
             paper.citations.forEach(citation => flatten(citation));
@@ -40,7 +42,9 @@ function flattenData(data: Paper): FlattenedData {
         if (data.citations) {
             for (const citation of data.citations) {
                 if (edges.findIndex(e => e.sourceId === data.paperId && e.targetId === citation.paperId) === -1) {
-                    edges.push(createEdge(data.paperId, citation.paperId));
+                    if(!!citation.title && !!data.title) {
+                        edges.push(createEdge(data.paperId, citation.paperId));
+                    }
                 }
                 createCitationHierarchy(citation);
             }
@@ -53,17 +57,17 @@ function flattenData(data: Paper): FlattenedData {
 
 function createPaperNode(paper: Paper): PaperNode {
     return {
-        type: 'paper',
+        type: 'node:paper',
         id: paper.paperId,
         paperId: paper.paperId,
-        position: {x: Math.random() * 15000, y: Math.random() * 15000},
+        // position: {x: Math.random() * 15000, y: Math.random() * 15000},
         size: {width: 100, height: 50},
         children: [
             <SLabel>{
                 type: 'label',
                 id: paper.paperId + '-title',
-                text: paper.title ?? 'no title',
-                position: {x: 10, y: 20},
+                text: paper.title ?? paper.paperId ?? 'no title',
+                // position: {x: 10, y: 20},
             }
         ]
     }

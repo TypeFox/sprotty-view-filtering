@@ -13,6 +13,7 @@
     },
     "dependencies": {
         "reflect-metadata": "^0.1.13",
-        "sprotty": "next"
+        "sprotty": "next",
+        "sprotty-elk": "next"
     }
 }
