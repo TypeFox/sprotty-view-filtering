@@ -2,14 +2,20 @@
     "name": "sprotty-view-filtering",
     "description": "Please enter a brief description here",
     "scripts": {
-        "build": "esbuild ./src/index.ts --bundle --sourcemap --outfile=./static/index.js",
-        "watch": "npm run build -- --watch",
-        "start": "npm run build -- --serve=8080 --servedir=static"
+        "build:server": "tsc",
+        "build:browser": "esbuild ./src/index.ts --bundle --sourcemap --outfile=./static/index.js",
+        "watch:server": "tsc -w",
+        "watch:browser": "npm run build:browser -- --watch",
+        "start": "node ./server/server"
+
     },
     "devDependencies": {
         "@types/node": "^18.0.0",
+        "@types/ws": "^8.5.4",
         "esbuild": "^0.17.8",
-        "typescript": "4.9.5"
+        "express": "^4.18.2",
+        "typescript": "4.9.5",
+        "ws": "^8.12.1"
     },
     "dependencies": {
         "reflect-metadata": "^0.1.13",

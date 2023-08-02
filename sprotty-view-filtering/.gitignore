@@ -2,5 +2,7 @@ src/**/*.js
 src/**/*.js.map
 static/**/*.js
 static/**/*.js.map
+server/**/*.js
+server/**/*.js.map
 node_modules
 .DS_Store

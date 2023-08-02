@@ -1,20 +1,26 @@
 {
-    "$schema": "https://json.schemastore.org/tsconfig",
-    "compilerOptions": {
-      "target": "ES2022",
-      "module": "commonjs",
-      "types": [
-        "reflect-metadata",
-        "node"
-      ],
-      "resolveJsonModule": true,
-      "esModuleInterop": true,
-      "sourceMap": true,
-      "experimentalDecorators": true,
-      "jsx": "react",
-      "rootDirs": [
-        "src", "scripts"
-      ]
-    },
-    "lib": ["ES2022","DOM"]
-  }
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "types": [
+      "reflect-metadata",
+      "node"
+    ],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "jsx": "react",
+    "rootDirs": [
+      "src", "scripts"
+    ]
+  },
+  "include": [
+    "./server/**/*.ts"
+  ],
+  "lib": [
+    "ES2022",
+    "DOM"
+  ]
+}

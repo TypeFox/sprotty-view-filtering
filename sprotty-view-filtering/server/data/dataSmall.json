@@ -1,0 +1,334 @@
+{
+    "paperId": "d1599e9ecd7f6d540c250b62c5c2b644c8a408d4",
+    "title": "Drawing layered graphs with port constraints",
+    "year": 2014,
+    "isOpenAccess": false,
+    "fieldsOfStudy": [
+        "Computer Science"
+    ],
+    "authors": [
+        {
+            "authorId": "21601271",
+            "name": "C. Schulze"
+        },
+        {
+            "authorId": "2983850",
+            "name": "Miro Spönemann"
+        },
+        {
+            "authorId": "1808523",
+            "name": "R. V. Hanxleden"
+        }
+    ],
+    "citations": [
+        {
+            "paperId": "ef398ac259d7e09edf92a9b60dc77112fcc5440a",
+            "title": "Classification for the Concrete Syntax of Graph-Like Modeling Languages",
+            "year": 2023,
+            "isOpenAccess": true,
+            "fieldsOfStudy": [
+                "Computer Science"
+            ],
+            "authors": [
+                {
+                    "authorId": "2132355",
+                    "name": "G. Wrobel"
+                },
+                {
+                    "authorId": "39540803",
+                    "name": "R. Scheffler"
+                }
+            ],
+            "citations": []
+        },
+        {
+            "paperId": "a5ca92830574f679d30a035a5ecb535434ac237a",
+            "title": "Modal Reactors",
+            "year": 2023,
+            "isOpenAccess": false,
+            "fieldsOfStudy": [
+                "Computer Science"
+            ],
+            "authors": [
+                {
+                    "authorId": "1412743392",
+                    "name": "Alexander Schulz-Rosengarten"
+                },
+                {
+                    "authorId": "1808523",
+                    "name": "R. V. Hanxleden"
+                },
+                {
+                    "authorId": "51304485",
+                    "name": "Marten Lohstroh"
+                },
+                {
+                    "authorId": "51178514",
+                    "name": "Soroush Bateni"
+                },
+                {
+                    "authorId": "1690704",
+                    "name": "Edward A. Lee"
+                }
+            ],
+            "citations": [
+                {
+                    "paperId": "47775310e53a1a61ec74dfc4e73f3c4e11a1c668",
+                    "title": "Polyglot Modal Models through Lingua Franca",
+                    "year": 2023,
+                    "isOpenAccess": false,
+                    "fieldsOfStudy": [
+                        "Computer Science"
+                    ],
+                    "authors": [
+                        {
+                            "authorId": "1412743392",
+                            "name": "Alexander Schulz-Rosengarten"
+                        },
+                        {
+                            "authorId": "150287006",
+                            "name": "R. von Hanxleden"
+                        },
+                        {
+                            "authorId": "51304485",
+                            "name": "Marten Lohstroh"
+                        },
+                        {
+                            "authorId": "1690704",
+                            "name": "Edward A. Lee"
+                        },
+                        {
+                            "authorId": "51178514",
+                            "name": "Soroush Bateni"
+                        }
+                    ],
+                    "citations": []
+                }
+            ]
+        },
+        {
+            "paperId": "617675e75a25cacdc7fa775f9d900bb92e371e6a",
+            "title": "Classification and mapping of layout algorithms for usage in graph-like modeling languages",
+            "year": 2022,
+            "isOpenAccess": true,
+            "fieldsOfStudy": [
+                "Computer Science"
+            ],
+            "authors": [
+                {
+                    "authorId": "2132355",
+                    "name": "G. Wrobel"
+                },
+                {
+                    "authorId": "39540803",
+                    "name": "R. Scheffler"
+                }
+            ],
+            "citations": [
+                {
+                    "paperId": "ef398ac259d7e09edf92a9b60dc77112fcc5440a"
+                }
+            ]
+        },
+        {
+            "paperId": "bdff6e7f6aa3446bff288a3be9a23b4bb9a6cce6",
+            "title": "AUTOMATSKO RASPOREĐIVANJE ELEMENATA DIJAGRAMA UPOTREBOM SUGIYAMA ALGORITMA, LSTM NEURONSKIH MREŽA I ELK BIBLIOTEKE",
+            "year": 2022,
+            "isOpenAccess": true,
+            "fieldsOfStudy": null,
+            "authors": [
+                {
+                    "authorId": "2161984137",
+                    "name": "Nenad Mišić"
+                }
+            ],
+            "citations": []
+        },
+        {
+            "paperId": "634a3a9928bcaacfdbabfb5433f7230417d5efd3",
+            "title": "A Mixed-Integer Program for Drawing Orthogonal Hyperedges in a Hierarchical Hypergraph",
+            "year": 2022,
+            "isOpenAccess": true,
+            "fieldsOfStudy": null,
+            "authors": [
+                {
+                    "authorId": "103005111",
+                    "name": "G. Fridman"
+                },
+                {
+                    "authorId": "100657613",
+                    "name": "Y. Vasiliev"
+                },
+                {
+                    "authorId": "2156320471",
+                    "name": "Vlada Puhkalo"
+                },
+                {
+                    "authorId": "143713837",
+                    "name": "V. Ryzhov"
+                }
+            ],
+            "citations": [
+                {
+                    "paperId": "11abeaa20aa1194c8f6a011c03af2cf655b21796",
+                    "title": "Crossing Numbers of Join Product with Discrete Graphs: A Study on 6-Vertex Graphs",
+                    "year": 2023,
+                    "isOpenAccess": true,
+                    "fieldsOfStudy": null,
+                    "authors": [
+                        {
+                            "authorId": "2222289234",
+                            "name": "Jana Fortes"
+                        },
+                        {
+                            "authorId": "88729083",
+                            "name": "M. Staš"
+                        }
+                    ],
+                    "citations": []
+                },
+                {
+                    "paperId": "b7ee0a3e4eecf1129f577d074ded37a462afd66f",
+                    "title": "Six methods for transforming layered hypergraphs to apply layered graph layout algorithms",
+                    "year": 2022,
+                    "isOpenAccess": true,
+                    "fieldsOfStudy": [
+                        "Computer Science"
+                    ],
+                    "authors": [
+                        {
+                            "authorId": "51235635",
+                            "name": "Sara Di Bartolomeo"
+                        },
+                        {
+                            "authorId": "1379976631",
+                            "name": "A. Pister"
+                        },
+                        {
+                            "authorId": "2118285",
+                            "name": "P. Buono"
+                        },
+                        {
+                            "authorId": "1764846",
+                            "name": "C. Plaisant"
+                        },
+                        {
+                            "authorId": "34889063",
+                            "name": "Cody Dunne"
+                        },
+                        {
+                            "authorId": "144381703",
+                            "name": "Jean-Daniel Fekete"
+                        }
+                    ],
+                    "citations": [
+                        {
+                            "paperId": "30065ac4eb2b4b5a57fda9ff25db5334994df6f4",
+                            "title": "VAC2: Visual Analysis of Combined Causality in Event Sequences",
+                            "year": 2022,
+                            "isOpenAccess": false,
+                            "fieldsOfStudy": [
+                                "Computer Science"
+                            ],
+                            "authors": [
+                                {
+                                    "authorId": "2004467452",
+                                    "name": "Sujia Zhu"
+                                },
+                                {
+                                    "authorId": "2170478487",
+                                    "name": "Yue Shen"
+                                },
+                                {
+                                    "authorId": "49659134",
+                                    "name": "Zihao Zhu"
+                                },
+                                {
+                                    "authorId": "2152007332",
+                                    "name": "Wang Xia"
+                                },
+                                {
+                                    "authorId": "1384954890",
+                                    "name": "Baofeng Chang"
+                                },
+                                {
+                                    "authorId": "4487395",
+                                    "name": "Ronghua Liang"
+                                },
+                                {
+                                    "authorId": "47333988",
+                                    "name": "Guodao Sun"
+                                }
+                            ],
+                            "citations": [
+                                {
+                                    "paperId": "b49ee425efb51d678d23a21c96eed418e6890e91",
+                                    "title": "Causal Discovery from Temporal Data: An Overview and New Perspectives",
+                                    "year": 2023,
+                                    "isOpenAccess": false,
+                                    "fieldsOfStudy": [
+                                        "Computer Science",
+                                        "Mathematics"
+                                    ],
+                                    "authors": [
+                                        {
+                                            "authorId": "2057185610",
+                                            "name": "Chang Gong"
+                                        },
+                                        {
+                                            "authorId": "144068230",
+                                            "name": "Di Yao"
+                                        },
+                                        {
+                                            "authorId": "2211984933",
+                                            "name": "Chuzhe Zhang"
+                                        },
+                                        {
+                                            "authorId": "2163431624",
+                                            "name": "Wenbin Li"
+                                        },
+                                        {
+                                            "authorId": "1805245",
+                                            "name": "Jingping Bi"
+                                        }
+                                    ],
+                                    "citations": [
+                                        {
+                                            "paperId": "ac42412b1ec84981546f4752c600df995b31a1ae",
+                                            "title": "Causal Discovery from Subsampled Time Series with Proxy Variables",
+                                            "year": 2023,
+                                            "isOpenAccess": false,
+                                            "fieldsOfStudy": [
+                                                "Computer Science",
+                                                "Mathematics"
+                                            ],
+                                            "authors": [
+                                                {
+                                                    "authorId": "2112345041",
+                                                    "name": "Mingzhou Liu"
+                                                },
+                                                {
+                                                    "authorId": "8283163",
+                                                    "name": "Xinwei Sun"
+                                                },
+                                                {
+                                                    "authorId": "2428553",
+                                                    "name": "Lingjing Hu"
+                                                },
+                                                {
+                                                    "authorId": "2143470643",
+                                                    "name": "Yizhou Wang"
+                                                }
+                                            ],
+                                            "citations": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

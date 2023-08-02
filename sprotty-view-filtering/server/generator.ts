@@ -1,6 +1,6 @@
 import { SEdge, SGraph, SNode, SLabel } from "sprotty-protocol";
-import { PaperNode, TaskNode } from "./model";
-import data from "./data/data270723.json";
+import { PaperNode, TaskNode } from "../src/model";
+import data from "./data/dataSmall.json";
 
 type Paper = {
     paperId: string,

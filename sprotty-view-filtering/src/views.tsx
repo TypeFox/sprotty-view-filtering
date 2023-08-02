@@ -8,7 +8,7 @@ import { TaskNode } from './model';
 
 @injectable()
 export class PaperNodeView extends RectangularNodeView {
-    render(node: Readonly<SNodeImpl & TaskNode>, context: RenderingContext): VNode {
+    render(node: Readonly<SNodeImpl & TaskNode>, context: RenderingContext): VNode | undefined {
         if(!this.isVisible(node, context)) {
             return undefined;
         }
