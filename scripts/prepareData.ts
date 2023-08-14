@@ -15,7 +15,7 @@ type Paper = {
     }[],
     fieldsOfStudy: string[],
     isOpenAccess: boolean,
-    citations: Paper[],
+    citations?: Paper[],
 }
 
 type PaperIdHierarchy = {

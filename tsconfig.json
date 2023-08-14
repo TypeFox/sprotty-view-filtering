@@ -12,12 +12,10 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "jsx": "react",
-    "rootDirs": [
-      "src", "scripts"
-    ]
+    "outDir": "./lib"
   },
   "include": [
-    "./server/**/*.ts"
+    "./src/server/**/*.ts"
   ],
   "lib": [
     "ES2022",

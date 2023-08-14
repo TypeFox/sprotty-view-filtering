@@ -10,7 +10,7 @@
             "request": "launch",
             "runtimeExecutable": "node",
             "runtimeArgs": [
-                "${workspaceFolder}/server/server"
+                "${workspaceFolder}/lib/server/server"
             ],
             "cwd": "${workspaceFolder}",
             "skipFiles": [
@@ -18,8 +18,21 @@
             ],
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/server/**/*.js"
+                "${workspaceFolder}/lib/server/**/*.js"
             ]
+        },
+        {
+            "name": "Chrome: UI",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}/static"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Full Stack",
+            "configurations": ["Server", "Chrome: UI"]
         }
     ]
 }

@@ -4,5 +4,6 @@ static/**/*.js
 static/**/*.js.map
 server/**/*.js
 server/**/*.js.map
+lib
 node_modules
 .DS_Store

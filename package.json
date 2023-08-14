@@ -3,10 +3,11 @@
     "description": "Please enter a brief description here",
     "scripts": {
         "build:server": "tsc",
-        "build:browser": "esbuild ./src/index.ts --bundle --sourcemap --outfile=./static/index.js",
+        "build:browser": "esbuild ./src/diagram/index.ts --bundle --sourcemap --outfile=./static/index.js",
+        "build": "npm run build:server && npm run build:browser",
         "watch:server": "tsc -w",
         "watch:browser": "npm run build:browser -- --watch",
-        "start": "node ./server/server"
+        "start": "node ./lib/server/server"
 
     },
     "devDependencies": {

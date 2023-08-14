@@ -28,7 +28,7 @@ export class PaperGraphLayoutConfigurator extends DefaultLayoutConfigurator {
 
     protected override graphOptions(sgraph: SGraph, index: SModelIndex): LayoutOptions | undefined {
         return {
-            'org.eclipse.elk.algorithm': 'org.eclipse.elk.stress'
+            'org.eclipse.elk.algorithm': 'org.eclipse.elk.layered',
         };
     }
 
@@ -85,7 +85,7 @@ wsServer.on('connection', socket => {
     });
 });
 
-serverApp.use(express.static(path.join(__dirname, '..', 'static')));
+serverApp.use(express.static(path.join(__dirname, '..', '..', 'static')));
 
 const server = serverApp.listen(8080, () => {
     console.log('Diagram is shown at http://localhost:8080');
