@@ -17,7 +17,8 @@ export default (containerId: string) => {
         configureViewerOptions(context, {
             needsClientLayout: false,
             needsServerLayout: true,
-            baseDiv: containerId
+            baseDiv: containerId,
+            zoomLimits: { min: 0.001, max: 2 }
         });
     });
 

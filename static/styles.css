@@ -21,16 +21,22 @@ html, body, .app {
     background-color: #fff;
 }
 
+.filters .modeButtons button.active {
+    background-color: #066c1a;
+    color: #fff;
+}
+
 .sprotty {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
+    flex: 1;
 }
 
 .sprotty-graph {
-    width: 70%;
-    height: 70%;
+    width: 95%;
+    height: 60%;
     background-color: #fff;
 }
 
