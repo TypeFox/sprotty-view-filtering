@@ -41,18 +41,22 @@ html, body, .app {
 }
 
 
-.sprotty-node.task {
+.sprotty-node {
     fill: #c0e0fc;
     stroke: #444;
     stroke-width: 1;
 }
 
-.sprotty-node.task.running {
-    fill: #aa2d2d;
+.selected .sprotty-node, .selected .sprotty-node.added {
+    fill: #81BB41;
 }
 
-.sprotty-node.task.finished {
-    fill: #81BB41;
+.sprotty-node.added {
+    fill: #f6864e;
+}
+
+.sprotty-node.hoverFeedback {
+    fill: #ee4ef6;
 }
 
 text {
