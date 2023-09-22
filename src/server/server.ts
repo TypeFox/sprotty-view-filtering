@@ -17,28 +17,28 @@
 import express from 'express';
 import * as path from 'path';
 import { DefaultElementFilter, DefaultLayoutConfigurator, ElkFactory, ElkLayoutEngine } from 'sprotty-elk/lib/elk-layout';
-import { SocketElkServer } from 'sprotty-elk/lib/node';
-import { Action, ActionMessage, DiagramServer, DiagramServices, SGraph, SModelIndex } from 'sprotty-protocol';
+import { Action, ActionMessage, DiagramServer, FitToScreenAction, DiagramServices, SGraph, SModelIndex, SPort, SNode } from 'sprotty-protocol';
 import { Server } from 'ws';
 import { generateGraph } from './generator';
 import { LayoutOptions } from 'elkjs/lib/elk-api';
 import ElkConstructor from 'elkjs/lib/elk.bundled';
+import { ServerActionHandlerRegistry } from 'sprotty-protocol/lib/action-handler';
+import { FilterAction } from '../common/actions';
 
 export class PaperGraphLayoutConfigurator extends DefaultLayoutConfigurator {
 
     protected override graphOptions(sgraph: SGraph, index: SModelIndex): LayoutOptions | undefined {
         return {
-            'org.eclipse.elk.algorithm': 'org.eclipse.elk.layered',
+            'org.eclipse.elk.algorithm': 'org.eclipse.elk.layered'
         };
     }
 
     // protected override nodeOptions(snode: SNode, index: SModelIndex): LayoutOptions | undefined {
     //     return {
     //         'org.eclipse.elk.nodeSize.constraints': 'PORTS PORT_LABELS NODE_LABELS MINIMUM_SIZE',
-    //         'org.eclipse.elk.nodeSize.minimum': '(40, 40)',
+    //         // 'org.eclipse.elk.nodeSize.minimum': '(10, 10)',
     //         'org.eclipse.elk.portConstraints': 'FREE',
-    //         'org.eclipse.elk.nodeLabels.placement': 'INSIDE H_CENTER V_TOP',
-    //         'org.eclipse.elk.portLabels.placement': 'OUTSIDE'
+    //         'org.eclipse.elk.nodeLabels.placement': 'INSIDE H_CENTER V_CENTER'
     //     };
     // }
 
@@ -47,22 +47,36 @@ export class PaperGraphLayoutConfigurator extends DefaultLayoutConfigurator {
     //         'org.eclipse.elk.port.borderOffset': '1'
     //     };
     // }
-
 }
 
 const serverApp = express();
 serverApp.use(express.json());
 
 const elkFactory: ElkFactory = () => new ElkConstructor();
+const serverActionHandlerRegistry = new ServerActionHandlerRegistry();
+serverActionHandlerRegistry.onAction(FilterAction.KIND, async (action: FilterAction, state, server) => {
+    console.log('FilterAction received', action, state, server);
+    const newGraph = generateGraph(action.filter);
+    await server.updateModel(newGraph);
+    // ids of all children after filtering
+    const ftsElms = newGraph.children?.filter(child => child.type === 'node:paper')?.map(child => child.id) ?? [];
+    await server.dispatch(FitToScreenAction.create(ftsElms, {
+        maxZoom: 0.5,
+        padding: 100
+    }));
+    return Promise.resolve();
+});
+
+const layoutConfigurator = new PaperGraphLayoutConfigurator();
 const services: DiagramServices = {
     DiagramGenerator: {
         generate: () => generateGraph()
     },
-    ModelLayoutEngine: new ElkLayoutEngine(elkFactory, new DefaultElementFilter(), new PaperGraphLayoutConfigurator())
+    ServerActionHandlerRegistry: serverActionHandlerRegistry,
+    ModelLayoutEngine: new ElkLayoutEngine(elkFactory, new DefaultElementFilter(), layoutConfigurator)
 }
 
 // Create a WebSocket Server
-// This is called from the `random-graph-distributed` example by `WebSocketDiagramServerProxy`
 const wsServer = new Server({ noServer: true });
 wsServer.on('connection', socket => {
 

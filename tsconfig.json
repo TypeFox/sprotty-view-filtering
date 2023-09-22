@@ -7,15 +7,16 @@
       "reflect-metadata",
       "node"
     ],
+    "experimentalDecorators": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "sourceMap": true,
-    "experimentalDecorators": true,
     "jsx": "react",
     "outDir": "./lib"
   },
   "include": [
-    "./src/server/**/*.ts"
+    "./src/server/**/*.ts",
+    "./src/common/**/*.ts"
   ],
   "lib": [
     "ES2022",
