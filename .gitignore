@@ -1,9 +1,7 @@
-src/**/*.js
-src/**/*.js.map
-static/**/*.js
-static/**/*.js.map
-server/**/*.js
-server/**/*.js.map
+packages/**/*.js
+packages/**/*.js.map
+packages/app/static/**/*.js
+packages/app/static/**/*.js.map
 lib
 node_modules
 .DS_Store

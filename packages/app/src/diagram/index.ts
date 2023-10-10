@@ -1,9 +1,8 @@
-import 'reflect-metadata'
-import { IActionDispatcher, TYPES, WebSocketDiagramServerProxy, onAction } from 'sprotty'
-import { SGraph, FitToScreenAction, SelectionResult, GetSelectionAction, SetModelAction, UpdateModelAction, RequestModelAction, SelectAction, Action, SNode } from 'sprotty-protocol'
-import createContainer from './di.config'
-import { FilterAction, FilterData } from '../common/actions';
-import { Paper, PaperAuthor, PaperMetaData } from '../common/model';
+import { FilterAction, FilterData, Paper, PaperMetaData, optimizeData } from 'common';
+import 'reflect-metadata';
+import { IActionDispatcher, TYPES, WebSocketDiagramServerProxy, onAction } from 'sprotty';
+import { Action, FitToScreenAction, GetSelectionAction, RequestModelAction, SGraph, SNode, SelectAction, SelectionResult, SetModelAction, UpdateModelAction } from 'sprotty-protocol';
+import createContainer from './di.config';
 
 const defaultFilter = (): FilterData => ({
     paperIds: [],
@@ -19,15 +18,7 @@ const defaultFilter = (): FilterData => ({
 })
 export let filter: FilterData = defaultFilter();
 
-export interface OptimizeData {
-    useIsVisible: boolean;
-    useZoomFactor: boolean;
-}
 
-export const optimizeData: OptimizeData = {
-    useIsVisible: false,
-    useZoomFactor: false
-}
 
 const el = (id: string) => document.getElementById(id);
 

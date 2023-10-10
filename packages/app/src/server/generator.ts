@@ -2,7 +2,6 @@ import { SEdge, SGraph, SModelElement, SLabel, SNode, SCompartment } from "sprot
 import { Paper, PaperAuthor, PaperLabel, PaperMetaData, PaperNode } from "../common/model";
 // import data from "./data/ai-papers.json";
 import data from "./data/data270723.json";
-import { FilterData } from "../common/actions";
 
 type PaperAsTree = { citations: PaperAsTree[], references: PaperAsTree[] } & Paper;
 type PaperFlat = { citations: string[], references: string[] } & Paper;

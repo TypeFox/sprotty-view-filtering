@@ -1,0 +1,19 @@
+{
+    "name": "sprotty-views",
+    "version": "1.0.0",
+    "description": "Sprotty views",
+    "main": "lib/index",
+    "types": "lib/index",
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w"
+    },
+    "devDependencies": {
+        "@types/node": "^18.0.0",
+        "typescript": "4.9.5"
+    },
+    "dependencies": {
+        "sprotty": "next",
+        "common": "^1.0.0"
+    }
+}

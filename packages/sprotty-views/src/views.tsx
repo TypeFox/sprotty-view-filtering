@@ -1,17 +1,15 @@
 /** @jsx svg */
-import { svg } from 'sprotty/lib/lib/jsx';
+import { Paper, PaperLabel, optimizeData } from 'common';
 import { injectable } from 'inversify';
 import { VNode } from 'snabbdom';
-import { IViewArgs, PolylineEdgeView, RectangularNodeView, RenderingContext, SModelElementImpl, SNodeImpl, ShapeView, ViewportRootElement, setAttr } from 'sprotty';
+import { IViewArgs, PolylineEdgeView, RectangularNodeView, RenderingContext, SEdgeImpl, SLabelImpl, SNodeImpl, ShapeView, ViewportRootElement, setAttr } from 'sprotty';
 import { getSubType } from 'sprotty-protocol';
-import { optimizeData } from '.';
-import { SEdgeImpl, SLabelImpl } from 'sprotty/lib/graph/sgraph';
-import { Paper, PaperLabel } from '../common/model';
+import { svg } from 'sprotty/lib/lib/jsx';
 
 @injectable()
 export class PaperNodeView extends RectangularNodeView {
     render(node: Readonly<SNodeImpl & Paper>, context: RenderingContext): VNode | undefined {
-        if(optimizeData.useIsVisible && !this.isVisible(node, context)) {
+        if (optimizeData.useIsVisible && !this.isVisible(node, context)) {
             return undefined;
         }
         return <g>

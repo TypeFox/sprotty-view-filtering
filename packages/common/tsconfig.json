@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "strictPropertyInitialization": false,
+    "noEmitOnError": false,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "declarationMap": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "ES2022",
+    "jsx": "react",
+    "typeRoots": ["node_modules/@types"],
+    "noImplicitAny": false,
+    "lib": ["ES2022"],
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "types": ["node"]
+  },
+  "include": ["src"]
+}
