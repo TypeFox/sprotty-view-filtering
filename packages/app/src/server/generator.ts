@@ -5,7 +5,7 @@ import data from "./data/data270723.json";
 
 type PaperAsTree = { citations: PaperAsTree[], references: PaperAsTree[] } & Paper;
 type PaperFlat = { citations: string[], references: string[] } & Paper;
-type FlattenPaperData = { papers: PaperFlat[], authors: PaperAuthor[], fieldsOfStudy: string[] };
+// type FlattenPaperData = { papers: PaperFlat[], authors: PaperAuthor[], fieldsOfStudy: string[] };
 
 function flattenData(data: PaperAsTree): PaperFlat[] {
     const papers: PaperFlat[] = [];

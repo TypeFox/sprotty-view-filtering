@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 const fields = ['title', 'year', 'authors', 'authors.name', 'fieldsOfStudy', 'tldr', 'isOpenAccess', 'openAccessPdf', 'references', 'references.paperId', 'citations', 'citations.paperId'] // process.argv[2].split(',') :'];
-const outputFile = path.resolve(__dirname, '../src/server/data/ai-papers.json'); // process.argv[3]';
+const outputFile = path.resolve(__dirname, '../packages/app/src/server/data/ai-papers.json'); // process.argv[3]';
 
 let dataSet = [];
 
