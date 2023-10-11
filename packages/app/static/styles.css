@@ -73,3 +73,9 @@ text {
     stroke: #000;
     stroke-width: 1px;
 }
+
+.badge > rect, .badge.selected > rect {
+    fill: #ADC2B4;
+    stroke: #000;
+    stroke-width: 1px;
+}

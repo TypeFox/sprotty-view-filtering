@@ -1,0 +1,46 @@
+{
+    "paperId": "d1599e9ecd7f6d540c250b62c5c2b644c8a408d4",
+    "title": "Drawing layered graphs with port constraints",
+    "year": 2014,
+    "isOpenAccess": false,
+    "fieldsOfStudy": [
+        "Computer Science"
+    ],
+    "authors": [
+        {
+            "authorId": "21601271",
+            "name": "C. Schulze"
+        },
+        {
+            "authorId": "2983850",
+            "name": "Miro Spönemann"
+        },
+        {
+            "authorId": "1808523",
+            "name": "R. V. Hanxleden"
+        }
+    ],
+    "citations": [
+        {
+            "paperId": "ef398ac259d7e09edf92a9b60dc77112fcc5440a",
+            "title": "Classification for the Concrete Syntax of Graph-Like Modeling Languages",
+            "year": 2023,
+            "isOpenAccess": true,
+            "fieldsOfStudy": [
+                "Computer Science",
+                "Mathematics"
+            ],
+            "authors": [
+                {
+                    "authorId": "2132355",
+                    "name": "G. Wrobel"
+                },
+                {
+                    "authorId": "39540803",
+                    "name": "R. Scheffler"
+                }
+            ],
+            "citations": []
+        }
+    ]
+}
