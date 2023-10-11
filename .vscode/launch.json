@@ -10,7 +10,7 @@
             "request": "launch",
             "runtimeExecutable": "node",
             "runtimeArgs": [
-                "${workspaceFolder}/lib/server/server"
+                "${workspaceFolder}/packages/app/lib/server/server"
             ],
             "cwd": "${workspaceFolder}",
             "skipFiles": [
@@ -26,7 +26,7 @@
             "type": "chrome",
             "request": "launch",
             "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}/static"
+            "webRoot": "${workspaceFolder}/packages/app/static"
         }
     ],
     "compounds": [

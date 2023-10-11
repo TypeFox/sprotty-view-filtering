@@ -1,0 +1,26 @@
+{
+    "name": "app",
+    "version": "1.0.0",
+    "description": "Frontend and backend for application",
+    "scripts": {
+        "build:browser": "esbuild ./src/diagram/index.ts --bundle --sourcemap --outfile=./static/index.js",
+        "build:server": "tsc",
+        "build": "npm run build:browser && npm run build:server",
+        "watch": "npm run build -- --watch"
+    },
+    "devDependencies": {
+        "@types/node": "^18.0.0",
+        "@types/ws": "^8.5.4",
+        "typescript": "4.9.5",
+        "esbuild": "^0.17.8",
+        "express": "^4.18.2",
+        "ws": "^8.12.1"
+    },
+    "dependencies": {
+        "reflect-metadata": "^0.1.13",
+        "sprotty": "next",
+        "sprotty-elk": "next",
+        "common": "1.0.0",
+        "sprotty-views": "1.0.0"
+    }
+}

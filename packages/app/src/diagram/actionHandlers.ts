@@ -1,6 +1,6 @@
+import { FilterAction } from "common";
 import { injectable } from "inversify";
 import { IActionHandler } from "sprotty";
-import { FilterAction } from "../common/actions";
 
 // TODO this is obsolete
 @injectable()

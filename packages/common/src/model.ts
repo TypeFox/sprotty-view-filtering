@@ -1,4 +1,4 @@
-import { SNode, SLabel } from "sprotty-protocol"
+import { SNode } from "sprotty-protocol";
 
 export type PaperNode = {
     paperId: string

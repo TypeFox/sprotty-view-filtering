@@ -1,8 +1,8 @@
 import { Container, ContainerModule } from "inversify";
-import { configureActionHandler, configureModelElement, configureViewerOptions, ConsoleLogger, edgeIntersectionModule, loadDefaultModules, LogLevel, moveFeature, PolylineEdgeView, RectangularNode, RectangularNodeView, SCompartmentImpl, SCompartmentView, SEdgeImpl, SGraphImpl, SGraphView, ShapeView, SLabelImpl, SLabelView, SNodeImpl, TYPES, WebSocketDiagramServerProxy } from "sprotty";
-import { PaperEdgeView, PaperNodeLabelView, PaperNodeView } from "./views";
-import { FilterAction } from "../common/actions";
+import { ConsoleLogger, LogLevel, SCompartmentImpl, SCompartmentView, SEdgeImpl, SGraphImpl, SGraphView, SLabelImpl, SNodeImpl, TYPES, WebSocketDiagramServerProxy, configureActionHandler, configureModelElement, configureViewerOptions, edgeIntersectionModule, loadDefaultModules, moveFeature } from "sprotty";
+import { FilterAction } from "common";
 import { FilterActionHandler } from "./actionHandlers";
+import { PaperEdgeView, PaperNodeLabelView, PaperNodeView } from "sprotty-views";
 
 export default (containerId: string) => {
 

@@ -23,5 +23,5 @@ var numNodes = 200; // Change as needed
 var maxEdgesPerNode = 6; // Change as needed
 var graph = generateRandomGraph(numNodes, maxEdgesPerNode);
 var jsonGraph = JSON.stringify(graph, null, 2);
-fs.writeFileSync('../src/server/data/random_graph.json', jsonGraph);
+fs.writeFileSync('../packages/app/src/server/data/random_graph.json', jsonGraph);
 console.log('Random graph data saved to random_graph.json');

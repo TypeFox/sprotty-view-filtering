@@ -14,16 +14,16 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
+import { FilterAction } from 'common';
+import { LayoutOptions } from 'elkjs/lib/elk-api';
+import ElkConstructor from 'elkjs/lib/elk.bundled';
 import express from 'express';
 import * as path from 'path';
 import { DefaultElementFilter, DefaultLayoutConfigurator, ElkFactory, ElkLayoutEngine } from 'sprotty-elk/lib/elk-layout';
-import { Action, ActionMessage, DiagramServer, FitToScreenAction, DiagramServices, SGraph, SModelIndex, SPort, SNode } from 'sprotty-protocol';
+import { Action, ActionMessage, DiagramServer, DiagramServices, FitToScreenAction, SGraph, SModelIndex } from 'sprotty-protocol';
+import { ServerActionHandlerRegistry } from 'sprotty-protocol/lib/action-handler';
 import { Server } from 'ws';
 import { generateGraph } from './generator';
-import { LayoutOptions } from 'elkjs/lib/elk-api';
-import ElkConstructor from 'elkjs/lib/elk.bundled';
-import { ServerActionHandlerRegistry } from 'sprotty-protocol/lib/action-handler';
-import { FilterAction } from '../common/actions';
 
 export class PaperGraphLayoutConfigurator extends DefaultLayoutConfigurator {
 

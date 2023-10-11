@@ -22,8 +22,8 @@ type PaperIdHierarchy = {
     [paperId: string]: PaperIdHierarchy
 }
 
-const inputFile = path.resolve(__dirname, '../data/data260723.json'); // process.argv[2];
-const outputFile = path.resolve(__dirname, '../data/data260723-prep.json');; // process.argv[2];
+const inputFile = path.resolve(__dirname, '../packages/app/src/server/data/data260723.json'); // process.argv[2];
+const outputFile = path.resolve(__dirname, '../packages/app/src/server/data/data260723-prep.json');; // process.argv[2];
 
 const data = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
 
