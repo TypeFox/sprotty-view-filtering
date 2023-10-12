@@ -1,7 +1,7 @@
 import { SEdge, SGraph, SModelElement, SLabel, SNode, SCompartment } from "sprotty-protocol";
 import { FilterData, Paper, PaperAuthor, PaperLabel, PaperMetaData, PaperNode } from "common";
 // import data from "./data/ai-papers.json";
-import data from "./data/data270723.json";
+import data from "./data/ai-papers_v3.json";
 
 type PaperAsTree = { citations: PaperAsTree[], references: PaperAsTree[] } & Paper;
 type PaperFlat = { citations: string[], references: string[] } & Paper;
@@ -231,7 +231,7 @@ function filterData(data: PaperFlat[], filter?: FilterData): PaperFlat[] {
 }
 
 export function generateGraph(filter?: FilterData): SGraph {
-    const flattenedData = flattenData(data as PaperAsTree);
+    const flattenedData = flattenData(data as any as PaperAsTree);
     // filter = !filter ? {...filter, titleFilter: 'enhancing smart farming'} : undefined;
     const filteredData = filterData(flattenedData, filter);
 
