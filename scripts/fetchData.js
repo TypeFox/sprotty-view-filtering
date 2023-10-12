@@ -13,9 +13,9 @@ const outputFile = path.resolve(__dirname, '../packages/app/src/server/data/ai-p
 let dataSet = [];
 
 const MAX_LEVELS = 50;
-const MAX_CITATIONS_PER_LEVEL = 5;
-const MAX_CITATION_FETCHES = 100;
-const MAX_REFERENCE_FETCHES = 100;
+const MAX_CITATIONS_PER_LEVEL = 10;
+const MAX_CITATION_FETCHES = 200;
+const MAX_REFERENCE_FETCHES = 200;
 
 let citationCount = 0;
 let referenceCount = 0;

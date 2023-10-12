@@ -1,4 +1,4 @@
-import { SEdge, SGraph, SModelElement, SLabel, SNode, SCompartment } from "sprotty-protocol";
+import { SEdge, SGraph, SModelElement, SLabel, SNode, SCompartment, SPort } from "sprotty-protocol";
 import { FilterData, Paper, PaperAuthor, PaperLabel, PaperMetaData, PaperNode } from "common";
 // import data from "./data/ai-papers.json";
 import data from "./data/ai-papers_v3.json";
@@ -116,6 +116,14 @@ function createPaperNode(paper: Paper): PaperNode {
 
                 })
             },
+            <SPort>{
+                type: 'port:citations',
+                id: paper.paperId + '-port-citations',
+            },
+            <SPort>{
+                type: 'port:references',
+                id: paper.paperId + '-port-references',
+            },
         ]
     }
 }
@@ -124,8 +132,8 @@ function createEdge(source: string, target: string): SEdge {
     return {
         type: 'edge',
         id: source + '-' + target,
-        sourceId: source,
-        targetId: target
+        sourceId: source + '-port-citations',
+        targetId: target + '-port-references',
     }
 }
 
@@ -136,14 +144,14 @@ function generateChildren(papers: PaperFlat[]): SModelElement[] {
         nodes.push(createPaperNode(paper));
         paper.citations?.forEach(citation => {
             if (papers.findIndex(p => p.paperId === citation) !== -1) {
-                if (edges.findIndex(edge => edge.sourceId === paper.paperId && edge.targetId === citation) === -1) {
+                if (edges.findIndex(edge => edge.sourceId === paper.paperId + '-port-citations' && edge.targetId === citation + '-port-references') === -1) {
                     edges.push(createEdge(paper.paperId, citation));
                 }
             }
         });
         paper.references?.forEach(reference => {
             if (papers.findIndex(p => p.paperId === reference) !== -1) {
-                if (edges.findIndex(edge => edge.sourceId === reference && edge.targetId === paper.paperId) === -1) {
+                if (edges.findIndex(edge => edge.sourceId === reference + '-port-citations' && edge.targetId === paper.paperId + '-port-references') === -1) {
                     edges.push(createEdge(reference, paper.paperId));
                 }
             }
@@ -189,7 +197,7 @@ function filterData(data: PaperFlat[], filter?: FilterData): PaperFlat[] {
     }
 
     if (hideWires) {
-        filteredData = filteredData.map(paper => ({ ...paper, citations: [] }));
+        filteredData = filteredData.map(paper => ({ ...paper, citations: [], references: [] }));
     }
 
     if (additionalChildLevels || additionalParentLevels) {
