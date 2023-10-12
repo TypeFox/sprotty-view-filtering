@@ -20,7 +20,7 @@ import ElkConstructor from 'elkjs/lib/elk.bundled';
 import express from 'express';
 import * as path from 'path';
 import { DefaultElementFilter, DefaultLayoutConfigurator, ElkFactory, ElkLayoutEngine } from 'sprotty-elk/lib/elk-layout';
-import { Action, ActionMessage, DiagramServer, DiagramServices, FitToScreenAction, SGraph, SModelIndex } from 'sprotty-protocol';
+import { Action, ActionMessage, DiagramServer, DiagramServices, FitToScreenAction, SGraph, SModelIndex, SPort, SNode } from 'sprotty-protocol';
 import { ServerActionHandlerRegistry } from 'sprotty-protocol/lib/action-handler';
 import { Server } from 'ws';
 import { generateGraph } from './generator';
@@ -33,20 +33,23 @@ export class PaperGraphLayoutConfigurator extends DefaultLayoutConfigurator {
         };
     }
 
-    // protected override nodeOptions(snode: SNode, index: SModelIndex): LayoutOptions | undefined {
-    //     return {
-    //         'org.eclipse.elk.nodeSize.constraints': 'PORTS PORT_LABELS NODE_LABELS MINIMUM_SIZE',
-    //         // 'org.eclipse.elk.nodeSize.minimum': '(10, 10)',
-    //         'org.eclipse.elk.portConstraints': 'FREE',
-    //         'org.eclipse.elk.nodeLabels.placement': 'INSIDE H_CENTER V_CENTER'
-    //     };
-    // }
+    protected override nodeOptions(snode: SNode, index: SModelIndex): LayoutOptions | undefined {
+        return {
+            'org.eclipse.elk.portConstraints': 'FIXED_SIDE',
+        };
+    }
 
-    // protected override portOptions(sport: SPort, index: SModelIndex): LayoutOptions | undefined {
-    //     return {
-    //         'org.eclipse.elk.port.borderOffset': '1'
-    //     };
-    // }
+    protected override portOptions(sport: SPort, index: SModelIndex): LayoutOptions | undefined {
+        if (sport.type === 'port:references') {
+        return {
+            'org.eclipse.elk.port.side': 'WEST'
+        };}
+
+        if (sport.type === 'port:citations') {
+            return {
+                'org.eclipse.elk.port.side': 'EAST'
+            };}
+    }
 }
 
 const serverApp = express();

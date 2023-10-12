@@ -1,6 +1,6 @@
 import { FilterAction } from "common";
 import { Container, ContainerModule } from "inversify";
-import { ConsoleLogger, LogLevel, SCompartmentImpl, SCompartmentView, SEdgeImpl, SGraphImpl, SGraphView, SLabelImpl, SNodeImpl, TYPES, WebSocketDiagramServerProxy, configureActionHandler, configureModelElement, configureViewerOptions, edgeIntersectionModule, loadDefaultModules, moveFeature } from "sprotty";
+import { CircularNodeView, ConsoleLogger, LogLevel, SCompartmentImpl, SCompartmentView, SEdgeImpl, SGraphImpl, SGraphView, SLabelImpl, SNodeImpl, SPortImpl, TYPES, WebSocketDiagramServerProxy, configureActionHandler, configureModelElement, configureViewerOptions, edgeIntersectionModule, loadDefaultModules, moveFeature } from "sprotty";
 import { BadgeView, PaperEdgeView, PaperNodeLabelView, PaperNodeView } from "sprotty-views";
 import { FilterActionHandler } from "./actionHandlers";
 
@@ -24,6 +24,8 @@ export default (containerId: string) => {
             disable: [moveFeature]
         });
         configureModelElement(context, 'edge', SEdgeImpl, PaperEdgeView);
+        configureModelElement(context, 'port:citations', SPortImpl, CircularNodeView);
+        configureModelElement(context, 'port:references', SPortImpl, CircularNodeView);
 
         // TODO this is obsolete
         configureActionHandler(context, FilterAction.KIND, FilterActionHandler);

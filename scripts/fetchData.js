@@ -8,18 +8,22 @@ const fs = require('fs');
 const path = require('path');
 
 const fields = ['title', 'year', 'authors', 'authors.name', 'fieldsOfStudy', 'tldr', 'isOpenAccess', 'openAccessPdf', 'references', 'references.paperId', 'citations', 'citations.paperId'] // process.argv[2].split(',') :'];
-const outputFile = path.resolve(__dirname, '../packages/app/src/server/data/ai-papers.json'); // process.argv[3]';
+const outputFile = path.resolve(__dirname, '../packages/app/src/server/data/ai-papers_v3.json'); // process.argv[3]';
 
 let dataSet = [];
 
 const MAX_LEVELS = 50;
-const MAX_CITATIONS_PER_LEVEL = 25;
-const MAX_FETCHES = 100;
+const MAX_CITATIONS_PER_LEVEL = 10;
+const MAX_CITATION_FETCHES = 200;
+const MAX_REFERENCE_FETCHES = 200;
 
-let count = 0;
+let citationCount = 0;
+let referenceCount = 0;
+
 const fetched = [];
-const didFetch = (paper) => {
-    count++;
+const didFetch = (paper, kind) => {
+    if (kind === 'citations' || kind === 'both') citationCount++;
+    if (kind === 'references' || kind === 'both') referenceCount++;
     const isFetched = fetched.includes(paper.paperId);
     if (!isFetched) {
         fetched.push(paper.paperId);
@@ -41,30 +45,35 @@ async function fetch(paperId, lvl, kind = 'both') {
 
             res.on('end', async () => {
                 const dataBlock = JSON.parse(data);
-                didFetch(dataBlock);
-                console.log(count, kind);
-                // if kind is both we fetch both citations and references
+                didFetch(dataBlock, kind);
+                if (kind === 'both' || kind === 'citations') {
+                    console.log(citationCount, kind);
+                }
                 if (kind === 'both' || kind === 'references') {
-                    if (dataBlock.references && dataBlock.references.length > 0) {
-                        if (count < MAX_FETCHES) {
+                    console.log(referenceCount, kind);
+                }
+                // if kind is both we fetch both citations and references
+                if (kind === 'both' || kind === 'citations') {
+                    if (dataBlock.citations && dataBlock.citations.length > 0) {
+                        if (citationCount < MAX_CITATION_FETCHES) {
                             lvl += 1;
-                            for (let i = 0; i < Math.min(dataBlock.references.length, MAX_CITATIONS_PER_LEVEL); i++) {
-                                const reference = dataBlock.references[i];
-                                if (reference.paperId && !alreadyFetched(reference.paperId)) {
-                                    dataBlock.references[i] = await fetch(dataBlock.references[i].paperId, lvl, 'references');
+                            for (let i = dataBlock.citations.length - 1; i >= Math.max(dataBlock.citations.length - MAX_CITATIONS_PER_LEVEL, 0); i--) {
+                                const citation = dataBlock.citations[i];
+                                if (citation.paperId && !alreadyFetched(citation.paperId)) {
+                                    dataBlock.citations[i] = await fetch(dataBlock.citations[i].paperId, lvl, 'citations');
                                 }
                             }
                         }
                     }
                 }
-                if (kind === 'both' || kind === 'citations') {
-                    if (dataBlock.citations && dataBlock.citations.length > 0) {
-                        if (count < MAX_FETCHES) {
+                if (kind === 'both' || kind === 'references') {
+                    if (dataBlock.references && dataBlock.references.length > 0) {
+                        if (referenceCount < MAX_REFERENCE_FETCHES) {
                             lvl += 1;
-                            for (let i = 0; i < Math.min(dataBlock.citations.length, MAX_CITATIONS_PER_LEVEL); i++) {
-                                const citation = dataBlock.citations[i];
-                                if (citation.paperId && !alreadyFetched(citation.paperId)) {
-                                    dataBlock.citations[i] = await fetch(dataBlock.citations[i].paperId, lvl, 'citations');
+                            for (let i = 0; i < Math.min(dataBlock.references.length, MAX_CITATIONS_PER_LEVEL); i++) {
+                                const reference = dataBlock.references[i];
+                                if (reference.paperId && !alreadyFetched(reference.paperId)) {
+                                    dataBlock.references[i] = await fetch(dataBlock.references[i].paperId, lvl, 'references');
                                 }
                             }
                         }
@@ -81,7 +90,7 @@ async function fetch(paperId, lvl, kind = 'both') {
 
 async function doFetch() {
     let level = 0;
-    const dataSet = await fetch('2d5673caa9e6af3a7b82a43f19ee920992db07ad', level);
+    const dataSet = await fetch('d755f461dddae76068f401409ba59c85a2436305', level);
     console.log("done", outputFile);
     fs.writeFileSync(outputFile, JSON.stringify(dataSet), {}, (err) => {});
 }
