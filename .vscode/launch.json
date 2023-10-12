@@ -18,7 +18,7 @@
             ],
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/lib/server/**/*.js"
+                "${workspaceFolder}/packages/app/lib/server/**/*.js"
             ]
         },
         {

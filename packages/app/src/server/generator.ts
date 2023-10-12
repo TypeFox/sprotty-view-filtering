@@ -1,5 +1,5 @@
 import { SEdge, SGraph, SModelElement, SLabel, SNode, SCompartment } from "sprotty-protocol";
-import { Paper, PaperAuthor, PaperLabel, PaperMetaData, PaperNode } from "../common/model";
+import { FilterData, Paper, PaperAuthor, PaperLabel, PaperMetaData, PaperNode } from "common";
 // import data from "./data/ai-papers.json";
 import data from "./data/data270723.json";
 
@@ -162,10 +162,11 @@ function filterData(data: PaperFlat[], filter?: FilterData): PaperFlat[] {
         filteredData = filteredData.filter(paper => paper.year >= yearFilter.from && paper.year <= yearFilter.to);
     }
 
-    if (fieldsOfStudyFilter && fieldsOfStudyFilter !== 'all' && fieldsOfStudyFilter !== 'unknown') {
-        filteredData = filteredData.filter(paper => paper.fieldsOfStudy && paper.fieldsOfStudy.some(fieldOfStudy => fieldsOfStudyFilter.includes(fieldOfStudy)));
-    } else if (fieldsOfStudyFilter === 'unknown') {
-        filteredData = filteredData.filter(paper => !paper.fieldsOfStudy || paper.fieldsOfStudy.length === 0);
+    if (fieldsOfStudyFilter && fieldsOfStudyFilter.length > 0) {
+        filteredData = filteredData.filter(paper => 
+            (paper.fieldsOfStudy && paper.fieldsOfStudy.some(fieldOfStudy => fieldsOfStudyFilter.includes(fieldOfStudy))) ||
+            ((!paper.fieldsOfStudy || paper.fieldsOfStudy.length === 0) && fieldsOfStudyFilter.includes('unknown'))
+        );
     }
 
     if (isOpenAccess !== undefined) {

@@ -3,7 +3,6 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "strict": true,
-    "noUnusedLocals": true,
     "strictPropertyInitialization": false,
     "noEmitOnError": false,
     "sourceMap": true,

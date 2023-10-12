@@ -2,6 +2,10 @@ packages/**/*.js
 packages/**/*.js.map
 packages/app/static/**/*.js
 packages/app/static/**/*.js.map
+packages/**/*.jsx
+packages/**/*.jsx.map
+packages/app/static/**/*.jsx
+packages/app/static/**/*.jsx.map
 lib
 node_modules
 .DS_Store

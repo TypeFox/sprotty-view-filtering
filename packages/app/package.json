@@ -3,24 +3,29 @@
     "version": "1.0.0",
     "description": "Frontend and backend for application",
     "scripts": {
-        "build:browser": "esbuild ./src/diagram/index.ts --bundle --sourcemap --outfile=./static/index.js",
+        "build:browser": "esbuild ./src/diagram/index.tsx --bundle --sourcemap --outfile=./static/index.jsx",
         "build:server": "tsc",
         "build": "npm run build:browser && npm run build:server",
-        "watch": "npm run build -- --watch"
+        "watch:browser": "npm run build:browser -- --watch",
+        "watch:server": "tsc -w"
     },
     "devDependencies": {
         "@types/node": "^18.0.0",
         "@types/ws": "^8.5.4",
-        "typescript": "4.9.5",
         "esbuild": "^0.17.8",
         "express": "^4.18.2",
+        "typescript": "4.9.5",
         "ws": "^8.12.1"
     },
     "dependencies": {
+        "@emotion/react": "^11.11.1",
+        "@emotion/styled": "^11.11.0",
+        "@fontsource/roboto": "^5.0.8",
+        "@mui/material": "^5.14.13",
+        "common": "1.0.0",
         "reflect-metadata": "^0.1.13",
         "sprotty": "next",
         "sprotty-elk": "next",
-        "common": "1.0.0",
         "sprotty-views": "1.0.0"
     }
 }

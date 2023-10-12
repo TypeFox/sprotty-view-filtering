@@ -5,7 +5,7 @@ export interface FilterData {
     titleFilter: string;
     authorFilter: string;
     yearFilter: { from: number, to: number };
-    fieldsOfStudyFilter: string;
+    fieldsOfStudyFilter: string[];
     isOpenAccess?: boolean;
     hideWiresOfHiddenNodes: boolean;
     hideWires: boolean;
