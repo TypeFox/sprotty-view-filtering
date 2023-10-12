@@ -5,7 +5,7 @@ import data from "./data/data270723.json";
 
 type PaperAsTree = { citations: PaperAsTree[], references: PaperAsTree[] } & Paper;
 type PaperFlat = { citations: string[], references: string[] } & Paper;
-type FlattenPaperData = { papers: PaperFlat[], authors: PaperAuthor[], fieldsOfStudy: string[] };
+// type FlattenPaperData = { papers: PaperFlat[], authors: PaperAuthor[], fieldsOfStudy: string[] };
 
 function flattenData(data: PaperAsTree): PaperFlat[] {
     const papers: PaperFlat[] = [];
@@ -39,68 +39,83 @@ function createPaperNode(paper: Paper): PaperNode {
     if (text.length > 50) {
         text = text.substring(0, 50) + '...';
     }
-    return <SNode & Paper>{
+    return <SNode & PaperNode>{
         type: 'node:paper',
         id: paper.paperId,
         paperId: paper.paperId,
-        layout: 'vbox',
         fieldsOfStudy: paper.fieldsOfStudy,
         year: paper.year,
         added: paper.added,
+        layout: 'vbox',
+        layoutOptions: {
+            hAlign: 'left',
+        },
         children: [
             <SCompartment>{
                 type: 'compartment',
-                id: paper.paperId + '-info',
+                id: paper.paperId + '-header',
                 layout: 'vbox',
                 children: [
-                    <SNode>{
-                        type: 'node:details',
-                        id: paper.paperId + '-title-container',
+                    <SLabel & PaperLabel>{
+                        type: 'label',
+                        id: paper.paperId + '-title',
+                        text,
+                        minZoomLevel: 0.3
+                    },
+                    <SLabel & PaperLabel>{
+                        type: 'label',
+                        id: paper.paperId + '-year',
+                        text: paper.year ? paper.year.toString() : '',
+                        minZoomLevel: 0.3
+                    }
+                ]
+            },
+            <SCompartment>{
+                type: 'compartment',
+                id: paper.paperId + '-authors',
+                layout: 'vbox',
+                children: paper.authors.map((author, idx) => {
+                    return <SLabel>{
+                        type: 'label',
+                        id: paper.paperId + '-author-' + idx,
+                        text: author.name,
+                        minZoomLevel: 0.7
+                    };
+                })
+            },
+            <SCompartment>{
+                type: 'compartment',
+                id: paper.paperId + '-fieldsOfStudy',
+                layout: 'hbox',
+                layoutOptions: {
+                    hGap: 5,
+                },
+                children: paper.fieldsOfStudy?.map(fieldOfStudy => {
+                    return <SCompartment>{
+                        type: 'compartment:badge',
+                        id: paper.paperId + '-fieldOfStudy-' + fieldOfStudy + '-badge',
                         layout: 'vbox',
+                        layoutOptions: {
+                            paddingLeft: 15,
+                            paddingRight: 15
+                        },
+                        minZoomLevel: 0.5,
                         children: [
                             <SLabel & PaperLabel>{
                                 type: 'label',
-                                id: paper.paperId + '-title',
-                                text,
-                                minZoomLevel: 0.3
+                                id: paper.paperId + '-fieldOfStudy-' + fieldOfStudy,
+                                text: fieldOfStudy,
+                                minZoomLevel: 0.5,
+                                layoutOptions: {
+                                    paddingLeft: 5,
+                                    paddingRight: 5
+                                }
                             }
                         ]
-                    },
-                    <SNode>{
-                        type: 'node:details',
-                        id: paper.paperId + '-authorsAndFieldsOfStudy',
-                        layout: 'vbox',
-                        children: [
-                            <SCompartment>{
-                                type: 'compartment',
-                                layout: 'vbox',
-                                id: paper.paperId + '-fieldsOfStudy',
-                                children: paper.fieldsOfStudy?.map(fieldOfStudy => {
-                                    return <SLabel & PaperLabel>{
-                                        type: 'label',
-                                        id: paper.paperId + '-fieldOfStudy-' + fieldOfStudy,
-                                        text: fieldOfStudy,
-                                        minZoomLevel: 0.5
-                                    }
-                                })
-                            },
-                            <SCompartment>{
-                                type: 'compartment',
-                                id: paper.paperId + '-authors',
-                                layout: 'vbox',
-                                children: paper.authors.map((author, idx) => {
-                                    return <SLabel>{
-                                        type: 'label',
-                                        id: paper.paperId + '-author-' + idx,
-                                        text: author.name,
-                                        minZoomLevel: 0.7
-                                    }
-                                })
-                            }
-                        ]
-                    }
-                ]
-            }
+                    };
+
+                })
+            },
         ]
     }
 }

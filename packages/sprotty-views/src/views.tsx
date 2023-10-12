@@ -2,7 +2,7 @@
 import { Paper, PaperLabel, optimizeData } from 'common';
 import { injectable } from 'inversify';
 import { VNode } from 'snabbdom';
-import { IViewArgs, PolylineEdgeView, RectangularNodeView, RenderingContext, SEdgeImpl, SLabelImpl, SNodeImpl, ShapeView, ViewportRootElement, setAttr } from 'sprotty';
+import { IViewArgs, PolylineEdgeView, RectangularNodeView, RenderingContext, SCompartmentImpl, SEdgeImpl, SLabelImpl, SNodeImpl, ShapeView, ViewportRootElement, setAttr } from 'sprotty';
 import { getSubType } from 'sprotty-protocol';
 import { svg } from 'sprotty/lib/lib/jsx';
 
@@ -63,6 +63,24 @@ export class PaperEdgeView extends PolylineEdgeView {
             {this.renderLine(edge, route, context, args)}
             {this.renderAdditionals(edge, route, context)}
             {context.renderChildren(edge, { route })}
+        </g>;
+    }
+}
+
+@injectable()
+export class BadgeView extends ShapeView {
+    render(node: Readonly<SCompartmentImpl & PaperLabel>, context: RenderingContext): VNode | undefined {
+        if (optimizeData.useIsVisible && !this.isVisible(node, context) || (optimizeData.useZoomFactor && !showDetail(node.root as ViewportRootElement, node.minZoomLevel))) {
+            return undefined;
+        }
+        return <g>
+            <rect class-sprotty-node={true}
+                width={node.size.width}
+                height={node.size.height}
+                rx={10}
+            >
+            </rect>
+            {context.renderChildren(node)}
         </g>;
     }
 }
