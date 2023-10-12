@@ -20,10 +20,12 @@ export type Paper = {
     authors: PaperAuthor[],
     fieldsOfStudy: string[],
     isOpenAccess: boolean,
-    added?: boolean
+    added?: boolean,
+    filtered?: boolean
 }
 
 export type PaperMetaData = {
     authors: PaperAuthor[];
     fieldsOfStudy: string[];
+    years: number[];
 }

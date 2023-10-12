@@ -159,7 +159,7 @@ function filterData(data: PaperFlat[], filter?: FilterData): PaperFlat[] {
 
     const { paperIds, titleFilter, authorFilter, yearFilter, fieldsOfStudyFilter, isOpenAccess, hideWires, additionalChildLevels, additionalParentLevels } = filter;
 
-    let filteredData = data.map<PaperFlat>(paper => ({ ...paper, added: false }));
+    let filteredData = data.map<PaperFlat>(paper => ({ ...paper, filtered: true, added: false }));
 
     if (paperIds && paperIds.length > 0) {
         filteredData = filteredData.filter(paper => paperIds.findIndex(id => id === paper.paperId) !== -1);
@@ -178,7 +178,7 @@ function filterData(data: PaperFlat[], filter?: FilterData): PaperFlat[] {
     }
 
     if (fieldsOfStudyFilter && fieldsOfStudyFilter.length > 0) {
-        filteredData = filteredData.filter(paper => 
+        filteredData = filteredData.filter(paper =>
             (paper.fieldsOfStudy && paper.fieldsOfStudy.some(fieldOfStudy => fieldsOfStudyFilter.includes(fieldOfStudy))) ||
             ((!paper.fieldsOfStudy || paper.fieldsOfStudy.length === 0) && fieldsOfStudyFilter.includes('unknown'))
         );
@@ -188,17 +188,21 @@ function filterData(data: PaperFlat[], filter?: FilterData): PaperFlat[] {
         filteredData = filteredData.filter(paper => paper.isOpenAccess === isOpenAccess);
     }
 
+    if (hideWires) {
+        filteredData = filteredData.map(paper => ({ ...paper, citations: [] }));
+    }
+
     if (additionalChildLevels || additionalParentLevels) {
         const filteredPapers: PaperFlat[] = [];
         const filteredPapersIds: string[] = [];
         const filterChildPapers = (paper: PaperFlat, level: number) => {
             if (level <= additionalChildLevels) {
                 if (filteredPapersIds.findIndex(id => id === paper.paperId) === -1) {
-                    filteredPapers.push({ ...paper, added: level > 0 ? true : false });
+                    filteredPapers.push({ ...paper, added: !paper.filtered ? true : false });
                     filteredPapersIds.push(paper.paperId);
                 }
                 paper.citations.forEach(citation => {
-                    const citationPaper = data.find(p => p.paperId === citation);
+                    const citationPaper = filteredData.find(p => p.paperId === citation) ?? data.find(p => p.paperId === citation);
                     if (citationPaper) {
                         filterChildPapers(citationPaper, level + 1);
                     }
@@ -223,10 +227,6 @@ function filterData(data: PaperFlat[], filter?: FilterData): PaperFlat[] {
         filteredData = filteredPapers;
     }
 
-    if (hideWires) {
-        filteredData = filteredData.map(paper => ({ ...paper, citations: [] }));
-    }
-
     return filteredData;
 }
 
@@ -249,22 +249,26 @@ export function generateGraph(filter?: FilterData): SGraph {
             }
         });
     });
-
-    // sort filtered data by year
-    // filteredData.sort((a, b) => b.year - a.year);
-
-    // const graph: SGraph = {
-    //     type: 'graph',
-    //     id: 'graph',
-    //     children: generateChildren(filteredData),
-    // };
+    
+    // get a list of unique years from flattened data
+    const years: number[] = [];
+    flattenedData.forEach(paper => {
+        if (years.findIndex(year => year === paper.year) === -1) {
+            years.push(paper.year);
+        }
+    });
+    // remove duplicate years
+    const uniqueYears = [...new Set(years)]
+    // sort years
+    uniqueYears.sort((a, b) => a - b);
 
     const graph: SGraph & PaperMetaData = {
         type: 'graph',
         id: 'graph',
         children: generateChildren(filteredData),
         authors,
-        fieldsOfStudy
+        fieldsOfStudy,
+        years: uniqueYears
     };
 
     return graph;

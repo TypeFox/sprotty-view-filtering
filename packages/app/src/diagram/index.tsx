@@ -1,45 +1,13 @@
 import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { FormControlLabel, Checkbox, ButtonGroup, Button, Autocomplete, TextField } from '@mui/material';
-
+import { FormControlLabel, Checkbox, ButtonGroup, Button, Autocomplete, TextField, Box, Slider } from '@mui/material';
 import { FilterAction, FilterData, OptimizeData, Paper, PaperMetaData, optimizeData } from 'common';
 import 'reflect-metadata';
 import { IActionDispatcher, TYPES, WebSocketDiagramServerProxy, onAction } from 'sprotty';
 import { Action, FitToScreenAction, GetSelectionAction, RequestModelAction, SGraph, SNode, SelectAction, SelectionResult, SetModelAction, UpdateModelAction } from 'sprotty-protocol';
 import createContainer from './di.config';
 import { on } from 'events';
-
-// const el = (id: string) => document.getElementById(id);
-
-// document.addEventListener("DOMContentLoaded", () => {
-
-//     const yearFilterInput = el('yearFilter') as HTMLInputElement;
-//     yearFilterInput.addEventListener('input', ev => {
-//         filter.titleFilter = (ev.target as HTMLInputElement).value;
-//         handleFilterChange();
-//     });
-
-
-//     const additionalChildLevelsFilter = el('additionalChildLevelsFilter') as HTMLInputElement;
-//     const additionalChildLevel = el('additionalChildLevels');
-//     additionalChildLevelsFilter.addEventListener('input', ev => {
-//         filter.additionalChildLevels = Number((ev.target as HTMLInputElement).value);
-//         // show the value in element with id 'additionalLevels'
-//         additionalChildLevel!.innerText = String(filter.additionalChildLevels);
-//         handleFilterChange();
-//     });
-//     const additionalParentLevelsFilter = el('additionalParentLevelsFilter') as HTMLInputElement;
-//     const additionalParentLevel = el('additionalParentLevels')!;
-//     additionalParentLevelsFilter.addEventListener('input', ev => {
-//         filter.additionalParentLevels = Number((ev.target as HTMLInputElement).value);
-//         // show the value in element with id 'additionalLevels'
-//         additionalParentLevel.innerText = String(filter.additionalParentLevels);
-//         handleFilterChange();
-//     });
-
-// });
-
 
 // sprotty container
 interface SprottyContext {
@@ -49,11 +17,12 @@ interface SprottyContext {
 }
 interface SprottyContainerProps {
     onModelReady: (sprottyContext: SprottyContext) => void;
-    onSelectionChanged: (selection: string[]) => void;
+    onSelectionChanged: (ids: string[]) => void;
+    onModelUpdated: (model: SGraph & PaperMetaData) => void;
 }
 const SprottyContainer = (props: SprottyContainerProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const { onModelReady, onSelectionChanged } = props;
+    const { onModelReady, onModelUpdated, onSelectionChanged } = props;
 
     useEffect(() => {
         const container = createContainer('sprotty');
@@ -65,15 +34,15 @@ const SprottyContainer = (props: SprottyContainerProps) => {
         const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher);
 
         onAction(container, SelectAction.KIND, (action: Action) => {
-            console.log('SelectAction', action);
-            onSelectionChanged((action as SelectAction).selectedElementsIDs);
+            actionDispatcher.request<SelectionResult>(GetSelectionAction.create()).then(selection => {
+                onSelectionChanged(selection.selectedElementsIDs);
+            });
         });
         onAction(container, SetModelAction.KIND, (action: Action) => {
             console.log('SetModelAction', action);
         });
         onAction(container, UpdateModelAction.KIND, (action: Action) => {
-            console.log('UpdateModelAction', action);
-            // initializeFilters({ authors: (modelSource.model as SGraph & PaperMetaData).authors, fieldsOfStudy: (modelSource.model as SGraph & PaperMetaData).fieldsOfStudy });
+            onModelUpdated((action as UpdateModelAction).newRoot as SGraph & PaperMetaData);
         });
 
         websocket.addEventListener('open', async () => {
@@ -110,8 +79,7 @@ const SprottyContainer = (props: SprottyContainerProps) => {
 
 // FilterContainer
 interface FilterContainerProps {
-    fieldOfStudyList: string[];
-    authorList: string[];
+    model: SGraph & PaperMetaData;
     selectedElements: string[];
     onFitAllToScreen: () => void;
     onFitSelectionToScreen: () => void;
@@ -120,13 +88,13 @@ interface FilterContainerProps {
 }
 const FilterContainer = (props: FilterContainerProps) => {
 
-    const { fieldOfStudyList, authorList, selectedElements, onFitAllToScreen, onFitSelectionToScreen, onFilterChanged, onOptimizeDataChanged } = props;
+    const { model, selectedElements, onFitAllToScreen, onFitSelectionToScreen, onFilterChanged, onOptimizeDataChanged } = props;
 
     const defaultFilter = (): FilterData => ({
         paperIds: [],
         titleFilter: '',
         authorFilter: '',
-        yearFilter: { from: 0, to: 0 },
+        yearFilter: { from: 0, to: model.years[model.years.length - 1] },
         fieldsOfStudyFilter: [],
         isOpenAccess: undefined,
         hideWiresOfHiddenNodes: false,
@@ -141,17 +109,10 @@ const FilterContainer = (props: FilterContainerProps) => {
     // optimize data state
     const [optimizeData, setOptimizeData] = useState<OptimizeData>({ useIsVisible: false, useZoomFactor: false });
 
-    //initializeFilters({ authors: model.authors, fieldsOfStudy: model.fieldsOfStudy });
+    // year fiter state, get a range by providing an array with min and max year
+    const [yearRange, setYearRange] = useState<number[]>([0, model.years.length - 1]);
 
-    // const initializeFilters = (metadata: PaperMetaData) => {
-    //     // collect all years
-    //     const years = modelSource.model.children?.filter(child => child.type === 'node:paper')?.map(child => (child as SNode & Paper).year) ?? [];
-    //     // remove duplicates
-    //     const uniqueYears = [...new Set(years)]
-    //     // sort years
-    //     uniqueYears.sort((a, b) => a - b);
-    //     // TODO use a rangeslider here later when we use nextjs or react or MUI or...
-    // }
+    //initializeFilters({ authors: model.authors, fieldsOfStudy: model.fieldsOfStudy });
 
     useEffect(() => {
         onOptimizeDataChanged(optimizeData);
@@ -193,6 +154,7 @@ const FilterContainer = (props: FilterContainerProps) => {
 
     // button to reset filter
     const handleShowAll = () => {
+        setYearRange([0, model.years.length - 1]);
         setFilter(defaultFilter());
     }
     // button to filter by paperId of only selected
@@ -210,6 +172,19 @@ const FilterContainer = (props: FilterContainerProps) => {
 
     const handleAuthorsChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
         setFilter({ ...filter, authorFilter: ev.target.value });
+    }
+
+    const handleYearFilterChange = (ev, yearRange) => {
+        setYearRange(yearRange as number[]);
+        setFilter({ ...filter, yearFilter: { from: model.years[yearRange[0]], to: model.years[yearRange[1]] } });
+    }
+
+    const handleAdditionalSuccessorLevelsChange = (ev, additionalChildLevels) => {
+        setFilter({ ...filter, additionalChildLevels });
+    }
+
+    const handleAdditionalPredecessorLevelsChange = (ev, additionalParentLevels) => {
+        setFilter({ ...filter, additionalParentLevels });
     }
 
     return <>
@@ -245,11 +220,11 @@ const FilterContainer = (props: FilterContainerProps) => {
                 </div>
                 <div id="filterContainer">
                     <div>
-                        <TextField id="titleFilter" label="Title" variant="filled" onChange={handleTitleFilterChange} />
+                        <TextField id="titleFilter" label="Title" variant="filled" value={filter.titleFilter} onChange={handleTitleFilterChange} />
                     </div>
                     <div>
-                        <TextField id="authorFilter" label="Author" variant="filled" onChange={handleAuthorsChange} />
-                    {/* <Autocomplete
+                        <TextField id="authorFilter" label="Author" variant="filled" value={filter.authorFilter} onChange={handleAuthorsChange} />
+                        {/* <Autocomplete
                         id="authorFilter"
                         freeSolo
                         options={authorList}
@@ -265,14 +240,26 @@ const FilterContainer = (props: FilterContainerProps) => {
                         onChange={handleAuthorsChange}
                     /> */}
                     </div>
-                    {/* <div>
-                        <input type="text" id="yearFilter" name="year" value="" />
-                    </div> */}
+                    <div>
+                        <Box sx={{ width: 200 }}>
+                            <Slider
+                                value={yearRange}
+                                step={1}
+                                min={0}
+                                max={model.years.length - 1}
+                                valueLabelFormat={(value) => model.years[value]}
+                                valueLabelDisplay="auto"
+                                marks={model.years.map((year, index) => ({ value: index, label: String(year) }))}
+                                onChange={handleYearFilterChange}
+                            />
+                        </Box>
+                    </div>
                     <Autocomplete
                         multiple
                         id="fieldsOfStudyFilter"
-                        options={['unknown', ...fieldOfStudyList]}
+                        options={['unknown', ...model.fieldsOfStudy]}
                         filterSelectedOptions
+                        value={filter.fieldsOfStudyFilter}
                         renderInput={(params) => (
                             <TextField
                                 {...params}
@@ -283,18 +270,34 @@ const FilterContainer = (props: FilterContainerProps) => {
                         )}
                         onChange={handleFieldsOfStudyFilterChange}
                     />
-                    {/* <div id="additionalLevelsFilterContainer">
-                        <div>
-                            <label htmlFor="additionalChildLevelsFilter">Additional child levels</label>
-                            <input id="additionalChildLevelsFilter" type="range" min="0" max="40" value="0" />
-                            <div id="additionalChildLevels"></div>
-                        </div>
-                        <div>
-                            <label htmlFor="additionalParentLevelsFilter">Additional parent levels</label>
-                            <input id="additionalParentLevelsFilter" type="range" min="0" max="40" value="0" />
-                            <div id="additionalParentLevels"></div>
-                        </div>
-                    </div> */}
+                    <div id="additionalLevelsFilterContainer">
+                        <FormControlLabel control={
+                            <Box sx={{ width: 200 }}>
+                                <Slider
+                                    id='additionalSuccessorsFilter'
+                                    value={filter.additionalChildLevels}
+                                    step={1}
+                                    min={0}
+                                    max={5}
+                                    marks
+                                    valueLabelDisplay="off"
+                                    onChange={handleAdditionalSuccessorLevelsChange}
+                                />
+                            </Box>} label="Additional successor levels" labelPlacement='top' />
+                        <FormControlLabel control={
+                            <Box sx={{ width: 200 }}>
+                                <Slider
+                                    id='additionalPredecessorsFilter'
+                                    value={filter.additionalParentLevels}
+                                    step={1}
+                                    min={0}
+                                    max={5}
+                                    marks
+                                    valueLabelDisplay="off"
+                                    onChange={handleAdditionalPredecessorLevelsChange}
+                                />
+                            </Box>} label="Additional predecessor levels" labelPlacement='top' />
+                    </div>
                 </div>
             </div>
         </div>
@@ -318,8 +321,12 @@ const App = () => {
         setModelSource(sprottyContext.modelSource);
     }
 
-    const onSelectionChanged = (selection: string[]) => {
-        setSelectedElements(selection);
+    const onModelUpdated = (model: SGraph & PaperMetaData) => {
+        setModel(model);
+    }
+
+    const onSelectionChanged = async (elementIds: string[]) => {
+        setSelectedElements(elementIds);
     }
 
     const onOptimizeDataChanged = (newOptimizeData: OptimizeData) => {
@@ -367,11 +374,10 @@ const App = () => {
     // }
 
     return <>
-        <SprottyContainer onSelectionChanged={onSelectionChanged} onModelReady={modelReadyHandler} />
+        <SprottyContainer onSelectionChanged={onSelectionChanged} onModelReady={modelReadyHandler} onModelUpdated={onModelUpdated} />
         {model && actionDispatcher &&
             <FilterContainer
-                authorList={model.authors.map(author => author.name)}
-                fieldOfStudyList={model.fieldsOfStudy}
+                model={model}
                 selectedElements={selectedElements}
                 onFilterChanged={onFilterChanged}
                 onFitAllToScreen={onFitAllToScreen}
