@@ -3,7 +3,7 @@ import { Paper, PaperLabel, optimizeData } from 'common';
 import { injectable } from 'inversify';
 import { VNode } from 'snabbdom';
 import { IViewArgs, PolylineEdgeView, RectangularNodeView, RenderingContext, SCompartmentImpl, SEdgeImpl, SLabelImpl, SNodeImpl, ShapeView, ViewportRootElement, setAttr } from 'sprotty';
-import { getSubType } from 'sprotty-protocol';
+import { Point, getSubType, toDegrees } from 'sprotty-protocol';
 import { svg } from 'sprotty/lib/lib/jsx';
 
 @injectable()
@@ -44,6 +44,22 @@ function showDetail(vp: ViewportRootElement, zoomLevel: number): boolean {
 
 @injectable()
 export class PaperEdgeView extends PolylineEdgeView {
+    protected renderAdditionals(edge: SEdgeImpl, segments: Point[], context: RenderingContext): VNode[] {
+        const p1 = segments[0];
+        const p2 = segments[1];
+
+        return [
+            <path class-arrowhead={true} 
+            d="M 7,-3 L 0,0 L 7,3 Z"
+            transform={`rotate(${this.angle(p1,p2)} ${p1.x} ${p1.y}) translate(${p1.x} ${p1.y})`}
+            />
+        ]
+    }
+
+    angle(x0: Point, x1: Point) {
+        return toDegrees(Math.atan2(x1.y - x0.y, x1.x - x0.x));
+    }
+
 
     render(edge: Readonly<SEdgeImpl>, context: RenderingContext, args?: IViewArgs): VNode | undefined {
         const route = this.edgeRouterRegistry.route(edge, args);

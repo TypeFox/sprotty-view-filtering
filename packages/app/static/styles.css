@@ -79,3 +79,7 @@ text {
     stroke: #000;
     stroke-width: 1px;
 }
+
+.arrowhead {
+    fill: black;
+}
