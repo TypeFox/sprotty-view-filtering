@@ -35,9 +35,9 @@ html, body, #app {
 }
 
 .sprotty-graph {
-    width: 95%;
-    height: 60%;
-    background-color: #fff;
+    width: 99%;
+    height: 99%;
+    background-color: #a0a0a0;
 }
 
 
@@ -70,7 +70,7 @@ text {
 
 .sprotty-edge {
     fill: none;
-    stroke: #000;
+    stroke: #ffffff;
     stroke-width: 1px;
 }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { FormControlLabel, Checkbox, ButtonGroup, Button, Autocomplete, TextField, Box, Slider } from '@mui/material';
+import { FormControlLabel, Checkbox, ButtonGroup, Button, Autocomplete, TextField, Box, Slider, Container } from '@mui/material';
 import { FilterAction, FilterData, OptimizeData, Paper, PaperMetaData, optimizeData } from 'common';
 import 'reflect-metadata';
 import { IActionDispatcher, TYPES, WebSocketDiagramServerProxy, onAction } from 'sprotty';
@@ -230,38 +230,43 @@ const FilterContainer = (props: FilterContainerProps) => {
     }, [filter]);
 
     return <>
-        <div className="filters">
-            <div>
-                <FormControlLabel control={<>
-                    <ButtonGroup variant="contained">
-                        <Button id="allFitToScreen" onClick={handleFitAllToScreen}>All</Button>
-                        <Button id="selectedFitToScreen" onClick={handleFitSelectionToScreen}>Selection</Button>
-                        <Button id="rootFitToScreen" onClick={handleFitRootToScreen}>Root</Button>
-                    </ButtonGroup>
-                </>} label="Fit to screen" labelPlacement='top' />
-            </div>
-            <div>
-                <FormControlLabel control={<>
-                    <ButtonGroup variant="contained">
-                        <Button id="showAll" onClick={handleShowAll}>All</Button>
-                        <Button id="showOnlySelected" onClick={handleShowSelected}>Selected</Button>
-                        <Button id="showRoot" onClick={handleShowRoot}>Root</Button>
-                    </ButtonGroup>
-                </>} label="Set Filter To" labelPlacement='top' />
-                <FormControlLabel control={<Checkbox onChange={handleFilterSelectedImmediately} />} label="Filter selected immediately" />
-            </div>
+        <Box className="filters">
+            <Box id="optionsContainer">
+                <Box>
+                    <FormControlLabel control={<Checkbox onChange={handleUseZoomFactor} />} label="Use zoom factor" />
+                </Box>
+                <Box>
+                    <FormControlLabel control={<Checkbox onChange={handleUseIsVisible} />} label="Use isVisible" />
+                </Box>
+                <Box>
+                    <FormControlLabel control={<Checkbox onChange={handleHideWires} checked={filter.hideWires} />} label="Hide all wires" />
+                </Box>
+            </Box>
+            <Box>
+                <Box>
+                    <FormControlLabel control={<>
+                        <ButtonGroup variant="contained">
+                            <Button id="allFitToScreen" onClick={handleFitAllToScreen}>All</Button>
+                            <Button id="selectedFitToScreen" onClick={handleFitSelectionToScreen}>Selection</Button>
+                            <Button id="rootFitToScreen" onClick={handleFitRootToScreen}>Root</Button>
+                        </ButtonGroup>
+                    </>} label="Fit to screen" labelPlacement='top' />
+                </Box>
+                <Box>
+                    <FormControlLabel control={<>
+                        <ButtonGroup variant="contained">
+                            <Button id="showAll" onClick={handleShowAll}>All</Button>
+                            <Button id="showOnlySelected" onClick={handleShowSelected}>Selected</Button>
+                            <Button id="showRoot" onClick={handleShowRoot}>Root</Button>
+                        </ButtonGroup>
+                    </>} label="Set Filter To" labelPlacement='top' />
+                </Box>
+                <Box>
+                    <FormControlLabel control={<Checkbox onChange={handleFilterSelectedImmediately} />} label="Filter selected immediately" />
+                </Box>
+            </Box>
             <div className="modeButtons">
-                <div id="optionsContainer">
-                    <div>
-                        <FormControlLabel control={<Checkbox onChange={handleUseZoomFactor} />} label="Use zoom factor" />
-                    </div>
-                    <div>
-                        <FormControlLabel control={<Checkbox onChange={handleUseIsVisible} />} label="Use isVisible" />
-                    </div>
-                    <div>
-                        <FormControlLabel control={<Checkbox onChange={handleHideWires} checked={filter.hideWires} />} label="Hide all wires" />
-                    </div>
-                </div>
+
                 <div id="filterContainer">
                     <div>
                         <TextField id="titleFilter" label="Title" variant="filled" value={titleFilterField} onChange={handleTitleFilterChange} />
@@ -349,7 +354,7 @@ const FilterContainer = (props: FilterContainerProps) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </Box>
     </>
 }
 
