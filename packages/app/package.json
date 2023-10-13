@@ -26,6 +26,7 @@
         "reflect-metadata": "^0.1.13",
         "sprotty": "next",
         "sprotty-elk": "next",
-        "sprotty-views": "1.0.0"
+        "sprotty-views": "1.0.0",
+        "use-debounce": "^9.0.4"
     }
 }

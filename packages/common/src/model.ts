@@ -25,6 +25,7 @@ export type Paper = {
 }
 
 export type PaperMetaData = {
+    rootId: string,
     authors: PaperAuthor[];
     fieldsOfStudy: string[];
     years: number[];

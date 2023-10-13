@@ -116,14 +116,14 @@ function createPaperNode(paper: Paper): PaperNode {
 
                 })
             },
-            <SPort>{
-                type: 'port:citations',
-                id: paper.paperId + '-port-citations',
-            },
-            <SPort>{
-                type: 'port:references',
-                id: paper.paperId + '-port-references',
-            },
+            // <SPort>{
+            //     type: 'port:citations',
+            //     id: paper.paperId + '-port-citations',
+            // },
+            // <SPort>{
+            //     type: 'port:references',
+            //     id: paper.paperId + '-port-references',
+            // },
         ]
     }
 }
@@ -132,8 +132,8 @@ function createEdge(source: string, target: string): SEdge {
     return {
         type: 'edge',
         id: source + '-' + target,
-        sourceId: source + '-port-citations',
-        targetId: target + '-port-references',
+        sourceId: source, // + '-port-citations',
+        targetId: target //+ '-port-references',
     }
 }
 
@@ -144,14 +144,14 @@ function generateChildren(papers: PaperFlat[]): SModelElement[] {
         nodes.push(createPaperNode(paper));
         paper.citations?.forEach(citation => {
             if (papers.findIndex(p => p.paperId === citation) !== -1) {
-                if (edges.findIndex(edge => edge.sourceId === paper.paperId + '-port-citations' && edge.targetId === citation + '-port-references') === -1) {
+                if (edges.findIndex(edge => edge.sourceId === paper.paperId && edge.targetId === citation) === -1 ) {
                     edges.push(createEdge(paper.paperId, citation));
                 }
             }
         });
         paper.references?.forEach(reference => {
             if (papers.findIndex(p => p.paperId === reference) !== -1) {
-                if (edges.findIndex(edge => edge.sourceId === reference + '-port-citations' && edge.targetId === paper.paperId + '-port-references') === -1) {
+                if (edges.findIndex(edge => edge.sourceId === reference && edge.targetId === paper.paperId) === -1) {
                     edges.push(createEdge(reference, paper.paperId));
                 }
             }
@@ -192,7 +192,7 @@ function filterData(data: PaperFlat[], filter?: FilterData): PaperFlat[] {
         );
     }
 
-    if (isOpenAccess !== undefined) {
+    if (isOpenAccess) {
         filteredData = filteredData.filter(paper => paper.isOpenAccess === isOpenAccess);
     }
 
@@ -245,7 +245,7 @@ export function generateGraph(filter?: FilterData): SGraph {
 
     const authors: PaperAuthor[] = [];
     const fieldsOfStudy: string[] = [];
-    filteredData.forEach(paper => {
+    flattenedData.forEach(paper => {
         paper.authors.forEach(author => {
             if (authors.findIndex(a => a === author) === -1) {
                 authors.push(author);
@@ -273,6 +273,7 @@ export function generateGraph(filter?: FilterData): SGraph {
     const graph: SGraph & PaperMetaData = {
         type: 'graph',
         id: 'graph',
+        rootId: flattenedData[0].paperId,
         children: generateChildren(filteredData),
         authors,
         fieldsOfStudy,
