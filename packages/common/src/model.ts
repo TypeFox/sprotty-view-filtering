@@ -22,6 +22,8 @@ export type Paper = {
     isOpenAccess: boolean,
     added?: boolean,
     filtered?: boolean
+    citationsCount: number,
+    referencesCount: number,
 }
 
 export type PaperMetaData = {

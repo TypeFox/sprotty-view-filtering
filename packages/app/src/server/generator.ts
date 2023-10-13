@@ -3,6 +3,8 @@ import { FilterData, Paper, PaperAuthor, PaperLabel, PaperMetaData, PaperNode } 
 // import data from "./data/ai-papers.json";
 import data from "./data/ai-papers_v3.json";
 
+let cachedFlattenedData: PaperFlat[] = [];
+
 type PaperAsTree = { citations: PaperAsTree[], references: PaperAsTree[] } & Paper;
 type PaperFlat = { citations: string[], references: string[] } & Paper;
 // type FlattenPaperData = { papers: PaperFlat[], authors: PaperAuthor[], fieldsOfStudy: string[] };
@@ -31,6 +33,13 @@ function flattenData(data: PaperAsTree): PaperFlat[] {
     }
     flatten(data);
 
+    papers.forEach(paper => {
+        const citationsCount = paper.citations?.filter(citation => papers.findIndex(p => p.paperId === citation) !== -1).length ?? 0;
+        const referencesCount = paper.references?.filter(reference => papers.findIndex(p => p.paperId === reference) !== -1).length ?? 0;
+        paper.citationsCount = citationsCount;
+        paper.referencesCount = referencesCount;
+    })
+
     return papers;
 }
 
@@ -39,6 +48,10 @@ function createPaperNode(paper: Paper): PaperNode {
     if (text.length > 50) {
         text = text.substring(0, 50) + '...';
     }
+
+    const citationsNumber = paper.citationsCount ?? 0;
+    const referencesNumber = paper.referencesCount ?? 0;
+
     return <SNode & PaperNode>{
         type: 'node:paper',
         id: paper.paperId,
@@ -115,6 +128,56 @@ function createPaperNode(paper: Paper): PaperNode {
                     };
 
                 })
+            },
+            <SCompartment>{
+                type: 'compartment',
+                id: paper.paperId + '-citations-and-references',
+                layout: 'hbox',
+                layoutOptions: {
+                    hGap: 325
+                },
+                children: [
+                    <SCompartment>{
+                        type: 'compartment:badge',
+                        id: paper.paperId + '-references',
+                        size: {width: 25, height: 25},
+                        layout: 'vbox',
+                        layoutOptions: {
+                            hAlign: 'center',
+                            vAlign: 'center',
+                            resizeContainer: false
+                        },
+                        minZoomLevel: 0.5,
+                        children: [
+                            <SLabel & PaperLabel>{
+                                type: 'label',
+                                id: paper.paperId + '-references-count',
+                                text: referencesNumber > 9 ? '9+' : referencesNumber.toString(),
+                                minZoomLevel: 0.5,
+                            }
+                        ]
+                    },
+                    <SCompartment>{
+                        type: 'compartment:badge',
+                        id: paper.paperId + '-citations',
+                        size: {width: 25, height: 25},
+                        layout: 'vbox',
+                        layoutOptions: {
+                            hAlign: 'center',
+                            vAlign: 'center',
+                            resizeContainer: false
+                        },
+                        minZoomLevel: 0.5,
+                        children: [
+                            <SLabel & PaperLabel>{
+                                type: 'label',
+                                id: paper.paperId + '-citations-count',
+                                text: citationsNumber > 9 ? '9+' : citationsNumber.toString(),
+                                minZoomLevel: 0.5,
+                            }
+                        ]
+                    },
+                ]
             },
             // <SPort>{
             //     type: 'port:citations',
@@ -239,13 +302,17 @@ function filterData(data: PaperFlat[], filter?: FilterData): PaperFlat[] {
 }
 
 export function generateGraph(filter?: FilterData): SGraph {
-    const flattenedData = flattenData(data as any as PaperAsTree);
+    if (cachedFlattenedData.length === 0) {
+        cachedFlattenedData = flattenData(data as any as PaperAsTree);
+    }
+
+    // const flattenedData = flattenData(data as any as PaperAsTree);
     // filter = !filter ? {...filter, titleFilter: 'enhancing smart farming'} : undefined;
-    const filteredData = filterData(flattenedData, filter);
+    const filteredData = filterData(cachedFlattenedData, filter);
 
     const authors: PaperAuthor[] = [];
     const fieldsOfStudy: string[] = [];
-    flattenedData.forEach(paper => {
+    cachedFlattenedData.forEach(paper => {
         paper.authors.forEach(author => {
             if (authors.findIndex(a => a === author) === -1) {
                 authors.push(author);
@@ -260,7 +327,7 @@ export function generateGraph(filter?: FilterData): SGraph {
     
     // get a list of unique years from flattened data
     const years: number[] = [];
-    flattenedData.forEach(paper => {
+    cachedFlattenedData.forEach(paper => {
         if (years.findIndex(year => year === paper.year) === -1) {
             years.push(paper.year);
         }
@@ -273,7 +340,7 @@ export function generateGraph(filter?: FilterData): SGraph {
     const graph: SGraph & PaperMetaData = {
         type: 'graph',
         id: 'graph',
-        rootId: flattenedData[0].paperId,
+        rootId: cachedFlattenedData[0].paperId,
         children: generateChildren(filteredData),
         authors,
         fieldsOfStudy,
