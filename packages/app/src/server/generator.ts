@@ -144,15 +144,19 @@ function generateChildren(papers: PaperFlat[]): SModelElement[] {
         nodes.push(createPaperNode(paper));
         paper.citations?.forEach(citation => {
             if (papers.findIndex(p => p.paperId === citation) !== -1) {
-                if (edges.findIndex(edge => edge.sourceId === paper.paperId && edge.targetId === citation) === -1 ) {
-                    edges.push(createEdge(paper.paperId, citation));
+                if(!edges.find(e => e.id === citation + '-' + paper.paperId)) {
+                    if (edges.findIndex(edge => edge.sourceId === paper.paperId && edge.targetId === citation) === -1 ) {
+                        edges.push(createEdge(paper.paperId, citation));
+                    }
                 }
             }
         });
         paper.references?.forEach(reference => {
             if (papers.findIndex(p => p.paperId === reference) !== -1) {
-                if (edges.findIndex(edge => edge.sourceId === reference && edge.targetId === paper.paperId) === -1) {
-                    edges.push(createEdge(reference, paper.paperId));
+                if(!edges.find(e => e.id === paper.paperId + '-' + reference)) {
+                    if (edges.findIndex(edge => edge.sourceId === reference && edge.targetId === paper.paperId) === -1) {
+                        edges.push(createEdge(reference, paper.paperId));
+                    }
                 }
             }
         });
