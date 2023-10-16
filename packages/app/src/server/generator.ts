@@ -59,6 +59,8 @@ function createPaperNode(paper: Paper): PaperNode {
         fieldsOfStudy: paper.fieldsOfStudy,
         year: paper.year,
         added: paper.added,
+        filtered: paper.filtered,
+        highlighted: paper.highlighted,
         layout: 'vbox',
         layoutOptions: {
             hAlign: 'left',
@@ -140,7 +142,7 @@ function createPaperNode(paper: Paper): PaperNode {
                     <SCompartment>{
                         type: 'compartment:badge',
                         id: paper.paperId + '-references',
-                        size: {width: 25, height: 25},
+                        size: { width: 25, height: 25 },
                         layout: 'vbox',
                         layoutOptions: {
                             hAlign: 'center',
@@ -160,7 +162,7 @@ function createPaperNode(paper: Paper): PaperNode {
                     <SCompartment>{
                         type: 'compartment:badge',
                         id: paper.paperId + '-citations',
-                        size: {width: 25, height: 25},
+                        size: { width: 25, height: 25 },
                         layout: 'vbox',
                         layoutOptions: {
                             hAlign: 'center',
@@ -207,8 +209,8 @@ function generateChildren(papers: PaperFlat[]): SModelElement[] {
         nodes.push(createPaperNode(paper));
         paper.citations?.forEach(citation => {
             if (papers.findIndex(p => p.paperId === citation) !== -1) {
-                if(!edges.find(e => e.id === citation + '-' + paper.paperId)) {
-                    if (edges.findIndex(edge => edge.sourceId === paper.paperId && edge.targetId === citation) === -1 ) {
+                if (!edges.find(e => e.id === citation + '-' + paper.paperId)) {
+                    if (edges.findIndex(edge => edge.sourceId === paper.paperId && edge.targetId === citation) === -1) {
                         edges.push(createEdge(paper.paperId, citation));
                     }
                 }
@@ -216,7 +218,7 @@ function generateChildren(papers: PaperFlat[]): SModelElement[] {
         });
         paper.references?.forEach(reference => {
             if (papers.findIndex(p => p.paperId === reference) !== -1) {
-                if(!edges.find(e => e.id === paper.paperId + '-' + reference)) {
+                if (!edges.find(e => e.id === paper.paperId + '-' + reference)) {
                     if (edges.findIndex(edge => edge.sourceId === reference && edge.targetId === paper.paperId) === -1) {
                         edges.push(createEdge(reference, paper.paperId));
                     }
@@ -228,11 +230,12 @@ function generateChildren(papers: PaperFlat[]): SModelElement[] {
 }
 
 function filterData(data: PaperFlat[], filter?: FilterData): PaperFlat[] {
-    if (!filter) {
+    data.forEach(paper => paper.highlighted = false);
+    if (!filter || filter.reset) {
         return data;
     }
 
-    const { paperIds, titleFilter, authorFilter, yearFilter, fieldsOfStudyFilter, isOpenAccess, hideWires, additionalChildLevels, additionalParentLevels } = filter;
+    const { highlightOnly, paperIds, titleFilter, authorFilter, yearFilter, fieldsOfStudyFilter, isOpenAccess, hideWires, additionalChildLevels, additionalParentLevels } = filter;
 
     let filteredData = data.map<PaperFlat>(paper => ({ ...paper, filtered: true, added: false }));
 
@@ -301,6 +304,15 @@ function filterData(data: PaperFlat[], filter?: FilterData): PaperFlat[] {
         filteredData.forEach(paper => filterParentPapers(paper, 0));
         filteredData = filteredPapers;
     }
+    if (highlightOnly) {
+        filteredData.forEach(p => {
+            const origPaper = data.find(paper => paper.paperId === p.paperId);
+            if (origPaper) {
+                origPaper.highlighted = true;
+            }
+        })
+        filteredData = data;
+    }
 
     return filteredData;
 }
@@ -328,7 +340,7 @@ export function generateGraph(filter?: FilterData): SGraph {
             }
         });
     });
-    
+
     // get a list of unique years from flattened data
     const years: number[] = [];
     cachedFlattenedData.forEach(paper => {

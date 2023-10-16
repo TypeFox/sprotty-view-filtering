@@ -1,6 +1,8 @@
 import { Action } from "sprotty-protocol";
 
 export interface FilterData {
+    reset: boolean;
+    highlightOnly: boolean;
     paperIds: string[];
     titleFilter: string;
     authorFilter: string;

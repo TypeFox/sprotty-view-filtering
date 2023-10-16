@@ -4,8 +4,8 @@ import { createRoot } from 'react-dom/client';
 import { FormControlLabel, Checkbox, ButtonGroup, Button, Autocomplete, TextField, Box, Slider, Container } from '@mui/material';
 import { FilterAction, FilterData, OptimizeData, Paper, PaperMetaData, optimizeData } from 'common';
 import 'reflect-metadata';
-import { IActionDispatcher, TYPES, WebSocketDiagramServerProxy, onAction } from 'sprotty';
-import { Action, FitToScreenAction, GetSelectionAction, RequestModelAction, SGraph, SNode, SelectAction, SelectionResult, SetModelAction, UpdateModelAction } from 'sprotty-protocol';
+import { IActionDispatcher, SEdgeImpl, TYPES, WebSocketDiagramServerProxy, onAction } from 'sprotty';
+import { SEdge, Action, FitToScreenAction, GetSelectionAction, RequestModelAction, SGraph, SNode, SelectAction, SelectionResult, SetModelAction, UpdateModelAction } from 'sprotty-protocol';
 import createContainer from './di.config';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -34,9 +34,23 @@ const SprottyContainer = (props: SprottyContainerProps) => {
         const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher);
 
         onAction(container, SelectAction.KIND, (action: Action) => {
-            actionDispatcher.request<SelectionResult>(GetSelectionAction.create()).then(selection => {
-                onSelectionChanged(selection.selectedElementsIDs);
+            const selection = action as SelectionResult;
+            const firstSelEl = modelSource.model.children?.find(c => c.id === selection.selectedElementsIDs[0]);
+            if(firstSelEl?.type === 'edge')
+                return
+            onSelectionChanged(selection.selectedElementsIDs);
+            const edges: SEdge[] = [];
+            selection.selectedElementsIDs.forEach(id => {
+                edges.push(...(modelSource.model.children?.filter(child =>
+                    child.type === 'edge' &&
+                    ((child as SEdge).sourceId === id || (child as SEdge).targetId === id)) as SEdge[]))
             });
+            if(edges.length > 0) {
+                const selEdgesAction = SelectAction.create({
+                    selectedElementsIDs: edges.map(e => e.id)
+                })
+                return selEdgesAction;
+            }
         });
         onAction(container, SetModelAction.KIND, (action: Action) => {
             console.log('SetModelAction', action);
@@ -92,6 +106,8 @@ const FilterContainer = (props: FilterContainerProps) => {
     const { model, selectedElements, onFitAllToScreen, onFitSelectionToScreen, onFitRootToScreen, onFilterChanged, onOptimizeDataChanged } = props;
 
     const defaultFilter = (): FilterData => ({
+        reset: true,
+        highlightOnly: false,
         paperIds: [],
         titleFilter: '',
         authorFilter: '',
@@ -128,7 +144,7 @@ const FilterContainer = (props: FilterContainerProps) => {
     }
 
     const handleHideWires = (ev: React.ChangeEvent<HTMLInputElement>) => {
-        setFilter({ ...filter, hideWires: ev.target.checked });
+        setFilter({ ...filter, reset: false, hideWires: ev.target.checked });
     }
 
     const handleFitAllToScreen = () => {
@@ -149,7 +165,7 @@ const FilterContainer = (props: FilterContainerProps) => {
     }
     useEffect(() => {
         if (!filterSelectedImmediately) return;
-        const newFilter: FilterData = { ...defaultFilter(), paperIds: selectedElements };
+        const newFilter: FilterData = { ...defaultFilter(), highlightOnly: filter.highlightOnly, reset: false, paperIds: selectedElements };
         newFilter.additionalChildLevels = filter.additionalChildLevels;
         newFilter.additionalParentLevels = filter.additionalParentLevels;
         setYearRange([0, model.years.length - 1]);
@@ -163,7 +179,7 @@ const FilterContainer = (props: FilterContainerProps) => {
     }
     // button to filter by paperId of only selected
     const handleShowSelected = () => {
-        const newFilter: FilterData = { ...defaultFilter(), paperIds: selectedElements };
+        const newFilter: FilterData = { ...defaultFilter(), highlightOnly: filter.highlightOnly, reset: false, paperIds: selectedElements };
         newFilter.additionalChildLevels = filter.additionalChildLevels;
         newFilter.additionalParentLevels = filter.additionalParentLevels;
         setYearRange([0, model.years.length - 1]);
@@ -171,13 +187,13 @@ const FilterContainer = (props: FilterContainerProps) => {
     }
 
     const handleShowRoot = () => {
-        setFilter({ ...defaultFilter(), paperIds: [model.rootId] });
+        setFilter({ ...defaultFilter(), highlightOnly: filter.highlightOnly, reset: false, paperIds: [model.rootId] });
     }
 
     const [titleFilterField, setTitleFilterField] = useState<string>('');
     const debouncedTitleFilterChange = useDebouncedCallback(
         (ev: React.ChangeEvent<HTMLInputElement>) => {
-            setFilter({ ...filter, titleFilter: ev.target.value });
+            setFilter({ ...filter, reset: false, titleFilter: ev.target.value });
         },
         500
     );
@@ -189,7 +205,7 @@ const FilterContainer = (props: FilterContainerProps) => {
     const [authorField, setAuthorField] = useState<string>('');
     const debouncedAuthorFilterChange = useDebouncedCallback(
         (ev: React.ChangeEvent<HTMLInputElement>) => {
-            setFilter({ ...filter, authorFilter: ev.target.value });
+            setFilter({ ...filter, reset: false, authorFilter: ev.target.value });
         },
         500
     );
@@ -200,11 +216,15 @@ const FilterContainer = (props: FilterContainerProps) => {
 
     // handler for show openAccess checkbox
     const handleOpenAccessChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-        setFilter({ ...filter, isOpenAccess: ev.target.checked });
+        setFilter({ ...filter, reset: false, isOpenAccess: ev.target.checked });
+    }
+
+    const handleHighlightOnlyChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+        setFilter({ ...filter, highlightOnly: ev.target.checked });
     }
 
     const handleFieldsOfStudyFilterChange = (ev, fieldsOfStudyFilter) => {
-        setFilter({ ...filter, fieldsOfStudyFilter });
+        setFilter({ ...filter, reset: false, fieldsOfStudyFilter });
     }
 
     const handleYearFilterChange = (ev, yearRange) => {
@@ -212,7 +232,7 @@ const FilterContainer = (props: FilterContainerProps) => {
     }
 
     const handleYearFilterChangeCommit = (ev, yearRange) => {
-        setFilter({ ...filter, yearFilter: { from: model.years[yearRange[0]], to: model.years[yearRange[1]] } });
+        setFilter({ ...filter, reset: false, yearFilter: { from: model.years[yearRange[0]], to: model.years[yearRange[1]] } });
     }
 
     const handleAdditionalSuccessorLevelsChange = (ev, additionalChildLevels) => {
@@ -224,13 +244,13 @@ const FilterContainer = (props: FilterContainerProps) => {
     }
 
     useEffect(() => {
-        setTitleFilterField(filter.titleFilter);
-        setAuthorField(filter.authorFilter);
+        setTitleFilterField((filter ?? defaultFilter()).titleFilter);
+        setAuthorField((filter ?? defaultFilter()).authorFilter);
         onFilterChanged(filter);
     }, [filter]);
 
     return <>
-        <Box className="filters">
+        <Box className="filters" sx={{ padding: '10px' }}>
             <Box id="optionsContainer">
                 <Box>
                     <FormControlLabel control={<Checkbox onChange={handleUseZoomFactor} />} label="Use zoom factor" />
@@ -239,7 +259,7 @@ const FilterContainer = (props: FilterContainerProps) => {
                     <FormControlLabel control={<Checkbox onChange={handleUseIsVisible} />} label="Use isVisible" />
                 </Box>
                 <Box>
-                    <FormControlLabel control={<Checkbox onChange={handleHideWires} checked={filter.hideWires} />} label="Hide all wires" />
+                    <FormControlLabel control={<Checkbox onChange={handleHideWires} checked={filter?.hideWires} />} label="Hide all wires" />
                 </Box>
             </Box>
             <Box>
@@ -261,99 +281,98 @@ const FilterContainer = (props: FilterContainerProps) => {
                         </ButtonGroup>
                     </>} label="Set Filter To" labelPlacement='top' />
                 </Box>
-                <Box>
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <FormControlLabel control={<Checkbox onChange={handleFilterSelectedImmediately} />} label="Filter selected immediately" />
                 </Box>
             </Box>
-            <div className="modeButtons">
-
-                <div id="filterContainer">
-                    <div>
-                        <TextField id="titleFilter" label="Title" variant="filled" value={titleFilterField} onChange={handleTitleFilterChange} />
-                    </div>
-                    <div>
-                        <TextField id="authorFilter" label="Author" variant="filled" value={authorField} onChange={handleAuthorsChange} />
-                        {/* <Autocomplete
+            {/* <div>
+                        <Autocomplete
                         id="authorFilter"
                         freeSolo
-                        options={authorList}
+                        options={model.authors}
                         filterSelectedOptions
                         renderInput={(params) => (
                             <TextField
-                                {...params}
-                                label="Authors"
+                            {...params}
+                            label="Authors"
                                 placeholder="Authors"
                                 variant="filled"
+                                />
+                                )}
+                                onChange={(ev, value) => handleAuthorsChange()}
                             />
-                        )}
-                        onChange={handleAuthorsChange}
-                    /> */}
-                    </div>
-                    <div>
-                        <FormControlLabel control={<Checkbox checked={!!filter.isOpenAccess} onChange={handleOpenAccessChange} />} label="Open Access only" />
-                    </div>
-                    <div>
-                        <Box sx={{ width: 200 }}>
-                            <Slider
-                                value={yearRange}
-                                step={1}
-                                min={0}
-                                max={model.years.length - 1}
-                                valueLabelFormat={(value) => model.years[value]}
-                                valueLabelDisplay="auto"
-                                marks
-                                // marks={model.years.map((year, index) => ({ value: index, label: String(year) }))}
-                                onChangeCommitted={handleYearFilterChangeCommit}
-                                onChange={handleYearFilterChange}
-                            />
-                        </Box>
-                    </div>
-                    <Autocomplete
-                        multiple
-                        id="fieldsOfStudyFilter"
-                        options={['unknown', ...model.fieldsOfStudy]}
-                        filterSelectedOptions
-                        value={filter.fieldsOfStudyFilter}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                label="Fields Of Study"
-                                placeholder="Fields Of Study"
-                                variant="filled"
-                            />
-                        )}
-                        onChange={handleFieldsOfStudyFilterChange}
+                    </div> */}
+            <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                <Box>
+                    <FormControlLabel control={<Checkbox checked={!!filter?.highlightOnly} onChange={handleHighlightOnlyChange} />} label="Only highlight filtered data" />
+                </Box>
+                <TextField fullWidth id="titleFilter" label="Title" variant="filled" value={titleFilterField} onChange={handleTitleFilterChange} />
+                <TextField fullWidth id="authorFilter" label="Author" variant="filled" value={authorField} onChange={handleAuthorsChange} />
+                <Box>
+                    <FormControlLabel control={<Checkbox checked={!!filter?.isOpenAccess} onChange={handleOpenAccessChange} />} label="Open Access only" />
+                </Box>
+                <Box sx={{ width: '95%' }}>
+                    <FormControlLabel control={
+                        <Slider
+                            sx={{ margin: '0' }}
+                            value={yearRange}
+                            step={1}
+                            min={0}
+                            max={model.years.length - 1}
+                            valueLabelFormat={(value) => model.years[value]}
+                            valueLabelDisplay="auto"
+                            marks
+                            // marks={model.years.map((year, index) => ({ value: index, label: String(year) }))}
+                            onChangeCommitted={handleYearFilterChangeCommit}
+                            onChange={handleYearFilterChange}
+                        />
+                    } sx={{ width: '100%', margin: '0' }} label="Year Range" labelPlacement='top' />
+                </Box>
+                <Autocomplete
+                    sx={{ width: '100%' }}
+                    multiple
+                    id="fieldsOfStudyFilter"
+                    options={['unknown', ...model.fieldsOfStudy]}
+                    filterSelectedOptions
+                    value={filter?.fieldsOfStudyFilter}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label="Fields Of Study"
+                            placeholder="Fields Of Study"
+                            variant="filled"
+                        />
+                    )}
+                    onChange={handleFieldsOfStudyFilterChange}
+                />
+            </Box>
+            <Box id="additionalLevelsFilterContainer" sx={{ width: '95%' }}>
+                <FormControlLabel control={
+                    <Slider
+                        id='additionalSuccessorsFilter'
+                        value={filter?.additionalChildLevels}
+                        step={1}
+                        min={0}
+                        max={5}
+                        marks
+                        valueLabelDisplay="auto"
+                        // onChange={handleAdditionalSuccessorLevelsChange}
+                        onChangeCommitted={handleAdditionalSuccessorLevelsChange}
                     />
-                    <div id="additionalLevelsFilterContainer">
-                        <FormControlLabel control={
-                            <Box sx={{ width: 200 }}>
-                                <Slider
-                                    id='additionalSuccessorsFilter'
-                                    value={filter.additionalChildLevels}
-                                    step={1}
-                                    min={0}
-                                    max={5}
-                                    marks
-                                    valueLabelDisplay="auto"
-                                    onChange={handleAdditionalSuccessorLevelsChange}
-                                />
-                            </Box>} label="Additional successor levels" labelPlacement='top' />
-                        <FormControlLabel control={
-                            <Box sx={{ width: 200 }}>
-                                <Slider
-                                    id='additionalPredecessorsFilter'
-                                    value={filter.additionalParentLevels}
-                                    step={1}
-                                    min={0}
-                                    max={5}
-                                    marks
-                                    valueLabelDisplay="auto"
-                                    onChange={handleAdditionalPredecessorLevelsChange}
-                                />
-                            </Box>} label="Additional predecessor levels" labelPlacement='top' />
-                    </div>
-                </div>
-            </div>
+                } sx={{ width: '100%', margin: '0' }} label="Additional successor levels" labelPlacement='top' />
+                <FormControlLabel control={
+                    <Slider
+                        id='additionalPredecessorsFilter'
+                        value={filter?.additionalParentLevels}
+                        step={1}
+                        min={0}
+                        max={5}
+                        marks
+                        valueLabelDisplay="auto"
+                        onChangeCommitted={handleAdditionalPredecessorLevelsChange}
+                    />
+                } sx={{ width: '100%', margin: '0' }} label="Additional predecessor levels" labelPlacement='top' />
+            </Box>
         </Box>
     </>
 }
@@ -420,7 +439,7 @@ const App = () => {
         }));
     }
 
-    const onFilterChanged = async (filter: FilterData) => {
+    const onFilterChanged = async (filter: FilterData | undefined) => {
         if (!modelSource) return;
         modelSource.handle({
             kind: FilterAction.KIND,

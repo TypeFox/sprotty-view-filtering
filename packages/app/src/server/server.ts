@@ -20,7 +20,7 @@ import ElkConstructor from 'elkjs/lib/elk.bundled';
 import express from 'express';
 import * as path from 'path';
 import { DefaultElementFilter, DefaultLayoutConfigurator, ElkFactory, ElkLayoutEngine } from 'sprotty-elk/lib/elk-layout';
-import { Action, ActionMessage, DiagramServer, DiagramServices, FitToScreenAction, SGraph, SModelIndex, SPort, SNode } from 'sprotty-protocol';
+import { Action, ActionMessage, DiagramServer, DiagramServices, FitToScreenAction, SelectAction, SGraph, SModelIndex, SPort, SNode } from 'sprotty-protocol';
 import { ServerActionHandlerRegistry } from 'sprotty-protocol/lib/action-handler';
 import { Server } from 'ws';
 import { generateGraph } from './generator';

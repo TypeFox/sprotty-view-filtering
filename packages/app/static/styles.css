@@ -37,12 +37,12 @@ html, body, #app {
 .sprotty-graph {
     width: 99%;
     height: 99%;
-    background-color: #a0a0a0;
+    background-color: #ffffff;
 }
 
 
 .sprotty-node {
-    fill: #c0e0fc;
+    fill: #66b8ff;
     stroke: #444;
     stroke-width: 1;
 }
@@ -55,7 +55,7 @@ html, body, #app {
     fill: #f6864e;
 }
 
-.sprotty-node.hoverFeedback {
+.sprotty-node.filter-highlight {
     fill: #ee4ef6;
 }
 
@@ -70,8 +70,13 @@ text {
 
 .sprotty-edge {
     fill: none;
-    stroke: #ffffff;
-    stroke-width: 1px;
+    stroke: #000000;
+    stroke-width: 3px;
+}
+
+.sprotty-edge.selected {
+    stroke: #00e804;
+    stroke-width: 6px;
 }
 
 .badge > rect, .badge.selected > rect {
@@ -81,5 +86,5 @@ text {
 }
 
 .arrowhead {
-    fill: black;
+    fill: rgb(0, 0, 0);
 }

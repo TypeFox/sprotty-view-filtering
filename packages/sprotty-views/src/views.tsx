@@ -13,7 +13,7 @@ export class PaperNodeView extends RectangularNodeView {
             return undefined;
         }
         return <g>
-            <rect class-sprotty-node={true} class-added={node.added} class-mouseover={node.hoverFeedback}
+            <rect class-filter-highlight={node.highlighted} class-sprotty-node={true} class-added={node.added} class-mouseover={node.hoverFeedback}
                 width={node.size.width}
                 height={node.size.height}
             >
@@ -75,7 +75,7 @@ export class PaperEdgeView extends PolylineEdgeView {
             return <g>{context.renderChildren(edge, { route })}</g>;
         }
 
-        return <g class-sprotty-edge={true} class-mouseover={edge.hoverFeedback}>
+        return <g class-selected={edge.selected} class-sprotty-edge={true} class-mouseover={edge.hoverFeedback}>
             {this.renderLine(edge, route, context, args)}
             {this.renderAdditionals(edge, route, context)}
             {context.renderChildren(edge, { route })}

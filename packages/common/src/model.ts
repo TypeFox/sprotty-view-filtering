@@ -21,7 +21,8 @@ export type Paper = {
     fieldsOfStudy: string[],
     isOpenAccess: boolean,
     added?: boolean,
-    filtered?: boolean
+    filtered?: boolean,
+    highlighted?: boolean,
     citationsCount: number,
     referencesCount: number,
 }
